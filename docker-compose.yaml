@@ -2,10 +2,10 @@ version: '3.2'
 services:
   my-app:
     build:
-      context: /client
+      context: client
       dockerfile: 'Dockerfile'
     ports:
-      - '8080:8080'
+      - '8080:3000'
     volumes:
       - app:/frontend
 

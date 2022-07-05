@@ -6,7 +6,7 @@ const LandingPage = () => {
     return (
         <React.Fragment>
             <section className='landingpage-wrapper'>
-                Period Tracker - Landing Page
+                Period Tracker - Landing Page (WIP)
             </section>
         </React.Fragment>
     );

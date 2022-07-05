@@ -1,6 +1,7 @@
 version: '3.2'
 services:
   my-app:
+    image: app:v1.1
     build:
       context: client
       dockerfile: 'Dockerfile'

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Nav from '../Common/Nav/Nav';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -130,8 +131,55 @@ const LandingPage = () => {
 
     return (
         <React.Fragment>
+            {
+                isShowPopup ?
+                    <section>
+                        <section className="popup-overlay"></section>
+                        <section className="popup">
+                            <section className="popup-controls">
+                                <button className="popup-close" onClick={() => closePopup(popupType)}>X</button>
+                            </section>
+                            <section className="popup-content">
+                                <h2 className="popup-heading">{popupType}</h2>
+                                {
+                                    formArray.map((item, index) => {
+                                        return (
+                                            <div key={item.key}>
+                                                <article className='popup-input'>
+                                                    <p className='popup-input-label'>{item.data.display}</p>
+                                                    <input className={!item.data.isValid && item.data.isTouched ? "popup-input-box popup-input-box-invalid" : "popup-input-box"} type={item?.data?.type} onKeyUp={(e) => setValue(e.target.value, item.key)}></input>
+                                                    {
+                                                        !item.data.isValid && item.data.isTouched ?
+                                                            <section className='input-box-invalid-wrapper'>
+                                                                <p className='input-box-invalid-msg'>{item.data.error}</p>
+                                                            </section>
+                                                        :
+                                                            null
+                                                    }
+                                                </article>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                <button className="popup-button" onClick={() => submit(popupType)} disabled={!isFormValid}>
+                                    {popupType}
+                                </button>
+                            </section>
+                        </section>
+                    </section>
+
+                :
+                    null
+            }
+            <Nav indexPagePopup={showPopup}></Nav>
             <section className='landingpage-wrapper'>
-                Period Tracker - Landing Page
+                <section className='landingpage-content'>
+                    <h1 className='landingpage-text'>WELCOME</h1>
+                    <section className='landingpage-buttons'>
+                        <button className='landingpage-button' onClick={() => showPopup('Login')}>Login</button>
+                        <button className='landingpage-button' onClick={() => showPopup('Sign up')}>Sign up</button>
+                    </section>
+                </section>
             </section>
         </React.Fragment>
     );

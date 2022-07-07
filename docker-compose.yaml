@@ -1,13 +1,9 @@
 version: '3.2'
 services:
   my-app:
+    image: app:v1.1
     build:
-      context: /client
+      context: client
       dockerfile: 'Dockerfile'
     ports:
-      - '8080:8080'
-    volumes:
-      - app:/frontend
-
-volumes:
-  app: {}
+      - '8080:3000'

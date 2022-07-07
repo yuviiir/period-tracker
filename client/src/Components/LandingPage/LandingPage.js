@@ -124,7 +124,7 @@ const LandingPage = () => {
     }
 
     function submit(type) {
-        console.log(type)
+        
     }
 
     const formArray = createArray(formData);

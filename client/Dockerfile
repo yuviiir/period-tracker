@@ -1,11 +1,11 @@
-FROM node:14.9.0 AS build-step
+FROM node:16 AS build-step
 
 WORKDIR /build
 
 COPY package.json ./
 RUN npm install
 
-COPY . .
+COPY . ./
 RUN npm run build
 
 FROM nginx:1.18-alpine

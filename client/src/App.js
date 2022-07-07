@@ -6,7 +6,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Homepage from './Components/Homepage/Homepage';
 import LandingPage from './Components/LandingPage/LandingPage';
 
-
 function App() {
   return (
     <div className="App">

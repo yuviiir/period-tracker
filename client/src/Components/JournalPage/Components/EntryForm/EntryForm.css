@@ -1,0 +1,201 @@
+.entry-form-wrapper {
+    padding: 1rem;
+    margin: 1rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.form-info {
+    margin: 0 1rem 1rem 0;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 0.2rem 0.6rem 0 rgba(0,0,0,0.2);
+}
+
+.form-info h1 {
+    font-size: 1rem;
+    margin-top: 0;
+}
+
+.form-desc {
+    margin-bottom: 0.3rem;
+    color: var(--grey);
+    font-weight: bold;
+}
+
+.react-calendar {
+    border: none !important;
+}
+
+.react-calendar__tile--now {
+    background: var(--lavendar-blush) !important;
+}
+
+.react-calendar__tile--active {
+    background: var(--begonia-pink) !important;
+    color: white !important;
+}
+
+#period-info {
+    flex-grow: 1;
+}
+
+#col-1, #col-2, #col-3 {
+    height: 100%;
+    display: inline-flex;
+}
+
+
+#period-day {
+    border: none;
+}
+
+#period-day label {
+    margin-right: 1rem;
+}
+
+/* FLOW */
+
+.flow {
+    width: 20%;
+    display: inline-flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    border: 2px solid var(--lavendar-blush);
+    border-radius: 0.8rem;
+    margin: 0.5rem;
+    padding-top: 1rem;
+    transition: 0.2s;
+}
+
+.flow:hover {
+    cursor: pointer;
+    border: 2px solid var(--begonia-pink);
+}
+
+.flow img {
+    height: auto;
+    width: 2rem;
+    vertical-align: middle;
+    align-self: center;
+}
+
+.flow p {
+    font-size: 0.8rem;
+    color: var(--grey);
+}
+
+/* MOOD */
+
+#mood {
+    align-self: stretch;
+    flex: auto;
+}
+
+.mood {
+    width: 15%;
+    display: inline-flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    border: 2px solid var(--lavendar-blush);
+    border-radius: 0.8rem;
+    margin: 0.5rem;
+    padding-top: 1rem;
+    transition: 0.2s;
+}
+
+.mood:hover {
+    cursor: pointer;
+    border: 2px solid var(--begonia-pink);
+}
+
+.mood img {
+    height: auto;
+    width: 2rem;
+    vertical-align: middle;
+    align-self: center;
+}
+
+.mood p {
+    font-size: 0.8rem;
+    color: var(--grey);
+}
+
+/* SYMPTOM */
+
+.symptom {
+    width: 15%;
+    display: inline-flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    border: 2px solid var(--lavendar-blush);
+    border-radius: 0.8rem;
+    margin: 0.5rem;
+    padding-top: 1rem;
+    transition: 0.2s;
+}
+
+.symptom:hover {
+    cursor: pointer;
+    border: 2px solid var(--begonia-pink);
+}
+
+.symptom img {
+    height: auto;
+    width: 2rem;
+    vertical-align: middle;
+    align-self: center;
+}
+
+.symptom p {
+    font-size: 0.8rem;
+    color: var(--grey);
+}
+
+#symptoms, #notes {
+    margin-bottom: 0;
+}
+
+#notes {
+    flex-grow: 1;
+}
+
+textarea {
+    width: 100%;
+    height: 65%;
+    padding: 12px 20px;
+    margin-top: 0.8rem;
+    box-sizing: border-box;
+    border: 2px solid var(--grey);
+    border-radius: 4px;
+    background-color: #fff8fb;
+    resize: none;
+}
+
+textarea:focus {
+    outline: none;
+    border: 2px solid var(--begonia-pink);
+}
+
+.selected-flow, .selected-mood {
+    border: 2px solid var(--begonia-pink);
+}
+
+#buttons button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    bottom: 0;
+}
+
+#buttons {
+    margin-top: 10%;
+}

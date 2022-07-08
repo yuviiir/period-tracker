@@ -1,0 +1,22 @@
+.current-cycle-wrapper {
+    padding: 1rem;
+    margin: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+#cycle-circle {
+    border: 10px solid #afafaf;
+    border-radius: 50%;
+    background-color: #EC98BA;
+    width: 15em;
+    height: 15em;
+}
+
+#cycle-day {
+    font-size: 2rem;
+}
+
+#cycle-day strong {
+    font-size: 3rem;
+}

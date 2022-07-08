@@ -1,3 +1,14 @@
+:root {
+  --begonia-pink: #EC9CBC;
+  --beetroot-purple: #D5296E;
+  --rocking-chair: #6F1539;
+  --akumas-fury: #801842;
+  --cultured: #eeeeee;
+  --lavendar-blush: #F6EEF1;
+  --silver: #C8C8C8;
+  --grey: #bebebe;
+}
+
 .App {
   text-align: center;
 }

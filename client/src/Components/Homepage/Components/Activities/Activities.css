@@ -1,0 +1,65 @@
+.activities-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    height: 100%;
+}
+
+.activity-block-wrapper {
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 0.8rem;
+    box-shadow: 0rem 0.5rem 0.625rem rgba(0, 0, 0, 0.1);
+    align-self: stretch;
+    height: 30%;
+    display: flex;
+    transition: 0.3s;
+}
+
+.activity-block-wrapper:hover {
+    box-shadow: 0rem 1rem 1.25rem rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+#log {
+    background-image: url('https://flo.health/media/5330/download/A%20woman%20having%20period%20symptoms%20but%20no%20period.jpg?v=1');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+    justify-content: left;
+    align-items: flex-end;
+    padding-left: 0.5rem;
+}
+
+#log h1 {
+    width: 7rem;
+    font-size: 1rem;
+}
+
+#day {
+    background-image: url('https://i.imgur.com/6v0XoX7.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    justify-content: right;
+    padding-top: 2rem;
+}
+
+#day h1 {
+    width: 5rem;
+    font-size: 1rem;
+}
+
+#month {
+    background-image: url('https://img.freepik.com/free-vector/menstruation-period-female-period-protection-vector-illustration_194782-872.jpg?w=2000');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+    justify-content: right;
+    padding-top: 0;
+}
+
+#month h1 {
+    width: 5rem;
+    font-size: 1rem;
+}

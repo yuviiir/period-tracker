@@ -184,7 +184,7 @@ textarea:focus {
     border: 2px solid var(--begonia-pink);
 }
 
-.selected-flow, .selected-mood {
+.selected-flow, .selected-mood, .selected-symptom {
     border: 2px solid var(--begonia-pink);
 }
 

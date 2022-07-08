@@ -28,12 +28,12 @@ let entry = {
     date: '',
     periodInfo: {
         period: true,
-        periodDay: 'start',
+        periodDay: 'end',
         flow: 'Heavy',
     },
     moods: ['Happy', 'Tired'],
     symptoms: ['Cramps', 'Mood Swings', 'Cravings'],
-    notes: ''
+    notes: 'I want sushi'
 }
 
 const EntryForm = () => {
@@ -47,12 +47,25 @@ const EntryForm = () => {
     }
 
     const TogglePeriodInfo = () => {
-        setIsShowPeriodInfo(!isShowPeriodInfo)
-        entry.periodInfo.period = !isShowPeriodInfo
-        if (!entry.periodInfo.period) {
-            entry.periodInfo.periodDay = ''
-            entry.periodInfo.flow = ''
+        let tempObj = {...dayEntry};
+        tempObj.periodInfo.period = !tempObj.periodInfo.period
+        if (!tempObj.periodInfo.period) {
+            tempObj.periodInfo.periodDay = ''
+            tempObj.periodInfo.flow = ''
         }
+        setDayEntry(tempObj);
+    }
+
+    const periodDayClick = (day) => {
+        let tempObj = {...dayEntry};
+        tempObj.periodInfo.periodDay = day
+        setDayEntry(tempObj);
+    }
+
+    function periodFlowClick(flow) {
+        let tempObj = {...dayEntry};
+        tempObj.periodInfo.flow = flow
+        setDayEntry(tempObj);
     }
 
     function moodClick(mood) {
@@ -66,23 +79,34 @@ const EntryForm = () => {
         setDayEntry(tempObj);
     }
 
-    const PopulateData = (entry) => {
-        /*if (entry.periodInfo.period) {
-            setIsShowPeriodInfo(true)
-            document.getElementById(entry.periodInfo.periodDay).checked = true
-            document.getElementById(entry.periodInfo.flow).classList.add('selected-flow')
+    function symptomClick(symptom) {
+        let tempObj = {...dayEntry};
+        if (tempObj.symptoms.includes(symptom)) {
+            tempObj.symptoms.splice(tempObj.symptom.indexOf(symptom), 1)
         }
-    
-        entry.moods.forEach(mood => {
-            document.getElementById(mood).classList.add('selected-mood')
-        });
-    
-        entry.symptoms.forEach(mood => {
-            document.getElementById(mood).classList.add('selected-mood')
-        });*/
+        else {
+            tempObj.symptoms.push(symptom)
+        }
+        setDayEntry(tempObj);
+    }
 
+    const PopulateData = (entry) => {
         setDayEntry(entry)
-        console.log(entry)
+    }
+
+    // get entry data from api
+    const GetDayEntry = (date) => {
+        console.log(date)
+    }
+
+    // post entry data to api
+    const SaveEntry = () => {
+        console.log(dayEntry)
+    }
+
+    // cancel changes made to entry
+    const CancelEntry = () => {
+
     }
 
     const flows = [
@@ -182,10 +206,8 @@ const EntryForm = () => {
         // call api or anything
         PopulateData(entry)
         console.log("loaded");
-    });
+     });
 
-    console.log(dayEntry)
-    
     return (
         <React.Fragment>
             <section className='entry-form-wrapper'>
@@ -198,18 +220,18 @@ const EntryForm = () => {
                     
                         <section id='period-info' className='form-info'>
                         <h1>Period Information
-                            <input type="checkbox" id='period-checkbox' onChange={TogglePeriodInfo}/>
+                            <input type="checkbox" id='period-checkbox' checked={dayEntry?.periodInfo?.period} onChange={TogglePeriodInfo}/>
                         </h1>
                         
-                        { isShowPeriodInfo ?   
+                        { dayEntry?.periodInfo?.period ?   
                             <article>
                             <p className='form-desc'>What day of your period was it?</p>
                             <fieldset id="period-day">
-                                <input type="radio" id='start' value="start" name="period-day" onClick={() => SetPeriodDay('start')}/>
+                                <input type="radio" id='start' value="start" name="period-day" checked={dayEntry?.periodInfo?.periodDay == 'start'} onChange={() => periodDayClick('start')}/>
                                 <label for="start">Start day</label>
-                                <input type="radio" id='end' value="end" name="period-day"  onClick={() => SetPeriodDay('end')}/>
+                                <input type="radio" id='end' value="end" name="period-day" checked={dayEntry?.periodInfo?.periodDay == 'end'} onChange={() => periodDayClick('end')}/>
                                 <label for="end">End day</label>
-                                <input type="radio" id='normal' value="normal" name="period-day"  onClick={() => SetPeriodDay('normal')}/>
+                                <input type="radio" id='normal' value="normal" name="period-day" checked={dayEntry?.periodInfo?.periodDay == 'normal'} onChange={() => periodDayClick('normal')}/>
                                 <label for="normal">Just another day</label>
                             </fieldset>
 
@@ -217,7 +239,7 @@ const EntryForm = () => {
                             {
                                 flows.map((flow) => {
                                     return(
-                                        <article className='flow' id={flow.name} onClick={() => SetPeriodFlow(flow.name)}>
+                                        <article className={dayEntry?.periodInfo?.flow == flow.name ? 'flow selected-flow' : 'flow'} id={flow.name} onClick={() => periodFlowClick(flow.name)}>
                                             <span>
                                             <img alt='period icon' src={flow.img}></img>
                                             <p>{flow.name}</p>
@@ -260,7 +282,7 @@ const EntryForm = () => {
                         {
                             symptoms.map((symptom) => {
                                 return(
-                                    <article className='symptom' id={symptom.name} onClick={() => SetSymptoms(symptom.name)}>
+                                    <article className={dayEntry?.symptoms?.includes(symptom.name) ? 'symptom selected-symptom' : 'symptom'} id={symptom.name} onClick={() => symptomClick(symptom.name)}>
                                         <span>
                                         <img alt='period icon' src={symptom.img}></img>
                                         <p>{symptom.name}</p>
@@ -288,56 +310,6 @@ const EntryForm = () => {
 
         </React.Fragment>
     );
-}
-
-const SetPeriodDay = (day) => {
-    entry.periodInfo.periodDay = day
-}
-
-const SetPeriodFlow = (flow) => {
-    entry.periodInfo.flow = flow
-    let elements = document.getElementsByClassName('selected-flow')
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].classList.remove('selected-flow');
-     }
-    document.getElementById(flow).classList.add('selected-flow')
-}
-
-const SetMoods = (mood) => {
-    let index = entry.moods.indexOf(mood)
-    if (index > -1) {
-        entry.moods.splice(index, 1)
-        document.getElementById(mood).classList.remove('selected-mood')
-    } else {
-        entry.moods.push(mood)
-        document.getElementById(mood).classList.add('selected-mood')
-    }
-}
-
-const SetSymptoms = (symptom) => {
-    let index = entry.symptoms.indexOf(symptom)
-    if (index > -1) {
-        entry.symptoms.splice(index, 1)
-        document.getElementById(symptom).classList.remove('selected-mood')
-    } else {
-        entry.symptoms.push(symptom)
-        document.getElementById(symptom).classList.add('selected-mood')
-    }
-}
-
-// post entry data to api
-const SaveEntry = () => {
-    console.log(entry)
-}
-
-// cancel changes made to entry
-const CancelEntry = () => {
-
-}
-
-// get entry data from api
-const GetDayEntry = (date) => {
-    console.log(date)
 }
 
 export default EntryForm;

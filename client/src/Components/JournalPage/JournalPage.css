@@ -2,10 +2,10 @@
     display: flex;
 }
     
-.left-wrapper {
+.journalpage-wrapper .left-wrapper {
     width: 23%;
 }
 
-.right-wrapper {
+.journalpage-wrapper .right-wrapper {
     width: 77%;
 }

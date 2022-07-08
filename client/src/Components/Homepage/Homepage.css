@@ -2,13 +2,13 @@
     display: flex;
 }
 
-.left-wrapper {
+.homepage-wrapper .left-wrapper {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 77%;
 }
 
-.right-wrapper {
+.homepage-wrapper .right-wrapper {
     width: 23%;
 }

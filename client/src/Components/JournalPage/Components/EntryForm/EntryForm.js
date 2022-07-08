@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, StrictMode } from 'react';
 import './EntryForm.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -39,6 +39,7 @@ let entry = {
 const EntryForm = () => {
     const [value, SetValue] = useState(new Date());
     const [isShowPeriodInfo, setIsShowPeriodInfo] = useState(false);
+    const [dayEntry, setDayEntry] = useState({})
 
     const OnChange = (date) => {
         SetValue(date)
@@ -52,6 +53,17 @@ const EntryForm = () => {
             entry.periodInfo.periodDay = ''
             entry.periodInfo.flow = ''
         }
+    }
+
+    function moodClick(mood) {
+        let tempObj = {...dayEntry};
+        if (tempObj.moods.includes(mood)) {
+            tempObj.moods.splice(tempObj.moods.indexOf(mood), 1)
+        }
+        else {
+            tempObj.moods.push(mood)
+        }
+        setDayEntry(tempObj);
     }
 
     const PopulateData = (entry) => {
@@ -68,6 +80,8 @@ const EntryForm = () => {
         entry.symptoms.forEach(mood => {
             document.getElementById(mood).classList.add('selected-mood')
         });*/
+
+        setDayEntry(entry)
         console.log(entry)
     }
 
@@ -168,7 +182,9 @@ const EntryForm = () => {
         // call api or anything
         PopulateData(entry)
         console.log("loaded");
-     });
+    });
+
+    console.log(dayEntry)
     
     return (
         <React.Fragment>
@@ -225,7 +241,7 @@ const EntryForm = () => {
                         {
                             moods.map((mood) => {
                                 return(
-                                    <article className='mood' id={mood.name} onClick={() => SetMoods(mood.name)}>
+                                    <article className={dayEntry?.moods?.includes(mood.name) ? 'mood selected-mood' : 'mood'} id={mood.name} onClick={() => moodClick(mood.name)}>
                                         <span>
                                         <img alt='period icon' src={mood.img}></img>
                                         <p>{mood.name}</p>

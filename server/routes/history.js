@@ -2,12 +2,19 @@ const express = require('express');
 const router = express.Router();
 
 router 
-.route("/:id")
+.route("/:date")
 .get((req, res) => {
-    let person_id = req.params.id;
-    let result = 'THIS PERSON IS HMMM' + person_id;
+    let calendarDate = req.params.date;
     //DB QUERY COMES HERE
-    res.send(result)
+})
+.patch("/start", (req, res) => {
+
+})
+.patch("/end", (req, res) => {
+
+})
+.put("/remove", (req, res) => {
+
 })
 
 module.exports = router;

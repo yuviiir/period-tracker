@@ -10,17 +10,13 @@ const PORT = process.env.PORT || 3000;
 
 //ROUTER TO API
 const historyRouter = require('./routes/history');
-const calendarRouter = require('./routes/calendar');
 const journalRouter = require('./routes/history');
-const predictionRouter = require('./routes/prediction')
 
 //Authentication middleware
 app.use(verificationHandler);
 
 app.use('/history', historyRouter);
-app.use('/calendar', calendarRouter);
 app.use('/journal', journalRouter);
-app.use('/prediction', predictionRouter)
 
 app.all('*', (req, res) => {
     res.status(400).send('<h1> PAGE NOT FOUND! </h1>')

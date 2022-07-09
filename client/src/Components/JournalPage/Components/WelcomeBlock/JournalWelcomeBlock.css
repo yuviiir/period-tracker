@@ -1,0 +1,37 @@
+.journal-welcome-block-wrapper {
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 0.2rem 0.6rem 0 rgba(0,0,0,0.2);
+    flex-basis: 100%;
+    background-color: #eaebed;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.journal-welcome-block-wrapper h1 {
+    font-size: 5rem;
+    margin: 0 auto;
+}
+
+.journal-welcome-block-wrapper p {
+    font-size: 1.5rem;
+    margin: 0 auto;
+}
+
+.journal-welcome-block-wrapper img {
+    width: 25rem;
+}
+
+.journal-welcome-block-wrapper span {
+    color: var(--begonia-pink);
+}
+
+.journal-welcome-block-wrapper .description {
+    margin-top: 2rem;
+    width: 18rem;
+    font-size: 1rem;
+}

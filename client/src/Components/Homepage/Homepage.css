@@ -1,3 +1,14 @@
 .homepage-wrapper {
+    display: flex;
+}
 
+.homepage-wrapper .left-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 77%;
+}
+
+.homepage-wrapper .right-wrapper {
+    width: 23%;
 }

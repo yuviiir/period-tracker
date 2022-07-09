@@ -7,13 +7,22 @@ router
     let calendarDate = req.params.date;
     //DB QUERY COMES HERE
 })
-.patch("/start", (req, res) => {
+
+router
+.route("/start")
+.patch((req, res) => {
 
 })
-.patch("/end", (req, res) => {
+
+router
+.route("/end")
+.patch((req, res) => {
 
 })
-.put("/remove", (req, res) => {
+
+router
+.route("/remove")
+.put((req, res) => {
 
 })
 

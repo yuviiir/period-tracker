@@ -2,6 +2,10 @@ const { response } = require('express');
 const express = require('express');
 const app = express();
 
+require('dotenv').config();
+
+const { verificationHandler } = require('./jwt');
+
 const PORT = process.env.PORT || 3000;
 
 //ROUTER TO API
@@ -10,14 +14,8 @@ const calendarRouter = require('./routes/calendar');
 const journalRouter = require('./routes/history');
 const predictionRouter = require('./routes/prediction')
 
-//Home page static files
-app.get('/', (req, res) => {
-    console.log('IT IS WORKING!');
-    res.sendStatus(200)
-
-    //SEND FILE FOR ROUTING HERE (THE PAGE YOU WOULD LIKE TO DISPLAY)
-    //res.sendFile(__dirname + 'where the file is in the file directory');
-});
+//Authentication middleware
+app.use(verificationHandler);
 
 app.use('/history', historyRouter);
 app.use('/calendar', calendarRouter);

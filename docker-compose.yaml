@@ -1,11 +1,11 @@
 version: '3.2'
 services:
   frontend:
-    image: johannsbbd/bbd-grad-period-tracker-frontend:v1.1
+    image: johannsbbd/bbd-grad-period-tracker-frontend:v1.2
     ports:
       - 8080:3000
   
   backend:
-    image: johannsbbd/bbd-grad-period-tracker-backend:v1.1
+    image: johannsbbd/bbd-grad-period-tracker-backend:v1.2
     ports:
       - 3000:3000

@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
-import Nav from '../Common/Nav/Nav';
+import React, { useContext, useState } from 'react';
 import './LandingPage.css';
 
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
+import Nav from '../Common/Nav/Nav';
+import UserPool from '../../UserPool';
+import { Context } from '../../Context/Context';
+
 const LandingPage = () => {
+    const context = useContext(Context);
     const [isShowPopup, setIsShowPopup] = useState(false);
     const [popupType, setPopupType] = useState('');
     const [formData, setFormData] = useState({});
@@ -18,7 +23,7 @@ const LandingPage = () => {
                     isTouched: false,
                     placeholder: "Eg. john@gmail.com",
                     display: "Email address",
-                    error: "Please enter a valid email address",
+                    error: "Please enter a valid email address.",
                     validation: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 },
                 password: {
@@ -27,51 +32,33 @@ const LandingPage = () => {
                     isTouched: false,
                     placeholder: "Enter your password",
                     display: "Password",
-                    error: "Please enter a valid password",
+                    error: "Please enter a valid password.",
                     type: "password",
-                    validation: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+                    validation: /^.{8,}$/
                 }
             }
             setFormData(data);
         }
         else {
             data = {
-                firstName: {
-                    value: null,
-                    isValid: false,
-                    isTouched: false,
-                    placeholder: "Eg. John",
-                    display: "First name",
-                    error: "Please enter a valid first name",
-                    validation: /^[a-zA-Z ]{2,50}$/
-                },
-                lastName: {
-                    value: null,
-                    isValid: false,
-                    isTouched: false,
-                    placeholder: "Eg. Smith",
-                    display: "Last name",
-                    error: "Please enter a valid last name",
-                    validation: /^[a-zA-Z ]{2,50}$/
-                },
                 email: {
                     value: null,
                     isValid: false,
                     isTouched: false,
                     placeholder: "Eg. john@gmail.com",
                     display: "Email address",
-                    error: "Please enter a valid email address",
+                    error: "Please enter a valid email address.",
                     validation: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 },
                 password: {
                     value: null,
                     isValid: false,
                     isTouched: false,
-                    placeholder: "Enter your password",
+                    placeholder: "Enter a password",
                     display: "Password",
-                    error: "Please enter a valid password",
+                    error: "Please enter a valid password. (At least 1 upprcase, 1 lowercase, 1 number and 1 special character.",
                     type: "password",
-                    validation: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+                    validation: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/
                 }
             }
             setFormData(data);
@@ -124,6 +111,44 @@ const LandingPage = () => {
     }
 
     function submit(type) {
+        context.setIsLoading(true);
+        if (type === 'Login') {
+            const user = new CognitoUser({
+                Username: formData.email.value,
+                Pool: UserPool
+            })
+
+            const authDetails = new AuthenticationDetails({
+                Username: formData.email.value,
+                Password: formData.password.value
+            })
+
+            user.authenticateUser(authDetails, {
+                onSuccess: (data) => {
+                    console.log("success", data);
+                    context.setIsLoading(false);
+                    window.location.href = "/home";
+                },
+                onFailure: (data) => {
+                    console.log("failure", data);
+                    context.setIsLoading(false);
+                },
+                newPasswordRequired: (data) => {
+                    console.log("newPassword", data)
+                    context.setIsLoading(false);
+                }
+            })
+        }
+        else {
+            UserPool.signUp(formData.email.value, formData.password.value, [], null, (err, data) => {
+                if (err) {
+                    console.log(err);
+                }
+                console.log(data);
+                setPopupType("Login");
+                context.setIsLoading(false);
+            })
+        }
         
     }
 

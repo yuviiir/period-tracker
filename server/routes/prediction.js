@@ -9,6 +9,7 @@ router
     //res.send()
 })
 
+router
 .route('/end') //THIS IS TO SHOW THE MONTH VIEW OF THE CALENDAR
 .get((req, res) => {
      //DB QUERY COMES HERE
@@ -16,15 +17,20 @@ router
     //res.send()
 })
 
+router
 .route('/average')
-.get('/period/days', (req,res) => {
+.get((req,res) => {
      //DB QUERY COMES HERE
      
     //res.send()
 })
-.get('/days/between/periods', (req,res) => {
+
+router
+.route('length')
+.get((req,res) => {
     //DB QUERY COMES HERE
      
     //res.send()
 })
+
 module.exports = router;

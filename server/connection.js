@@ -3,13 +3,7 @@
 const {MongoClient} = require('mongodb');
 const url = process.env.MONGO_URL;
 
-let db;
-
 async function getConnection(){
-
-    if (db) {
-        return db;
-    }
 
     try {
         const conn = new MongoClient(url);
@@ -21,6 +15,7 @@ async function getConnection(){
 
     } catch (e) {
         console.error(e);
+        db.close();
     }
 }
 

@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const {getConnection} = require('../connection');
+const {MongoClient} = require('mongodb');
+const url = process.env.MONGO_URL;
 
 
 router 
-.route("/cycle/all")
-.get((req, res) => {
+.route("/all")
+.get(async (req, res) => {
     let username = res.locals.username;
-    let db = getConnection();
+
+    const conn = new MongoClient(url);
+    await conn.connect();
+
+    db = conn.db("PeriodTracker");
 
     if (!db) {
         res.status(500).send({ err: "Internal db error on get connection" });
@@ -15,10 +20,12 @@ router
     }
 
     try {
-        res.status(200).send(db.cycle.find({username: username}));
+        let mongoRes = await db.collection("cycle").find({username: username});
+
+        res.status(200).send(mongoRes);
 
     } catch (e) {
-        res.status(500).send({err: "Internal db error on query"})
+        res.status(500).send({err: "Internal db error on query: " + e})
 
     } finally {
         db.close();

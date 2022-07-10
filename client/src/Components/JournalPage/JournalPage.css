@@ -1,0 +1,14 @@
+.journalpage-wrapper {
+    display: flex;
+    align-items: center;
+    height: 88vh;
+    background-color: white;
+}
+    
+.journalpage-wrapper .left-wrapper {
+    width: 23%;
+}
+
+.journalpage-wrapper .right-wrapper {
+    width: 77%;
+}

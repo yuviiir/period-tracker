@@ -1,9 +1,16 @@
 version: '3.2'
 services:
-  my-app:
-    image: app:v1.2
-    build:
-      context: client
-      dockerfile: 'Dockerfile'
+  frontend:
+    image: johannsbbd/bbd-grad-period-tracker-frontend:v1.3
     ports:
-      - '8080:3000'
+      - 8080:3000
+  
+  backend:
+    image: johannsbbd/bbd-grad-period-tracker-backend:v1.3
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=${BACKEND_PORT}
+      - COGNITO_REGION=${COGNITO_REGION}
+      - COGNITO_POOL_ID=${COGNITO_POOL_ID}
+      - MONGO_URL=${MONGO_URL}

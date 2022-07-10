@@ -8,10 +8,13 @@ import { login, signUp } from '../../Services/Services';
 import Loader from '../Common/Loader/Loader'
 
 const LandingPage = () => {
+    const context = useContext(PeriodTrackerContext);
     const [isShowPopup, setIsShowPopup] = useState(false);
     const [popupType, setPopupType] = useState('');
     const [formData, setFormData] = useState({});
     const [isFormValid, setIsFormValid] = useState(false);
+    const [inLineError, setInLineError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     function initialiseForm(type) {
         let data;
@@ -23,7 +26,7 @@ const LandingPage = () => {
                     isTouched: false,
                     placeholder: "Eg. john@gmail.com",
                     display: "Email address",
-                    error: "Please enter a valid email address",
+                    error: "Please enter a valid email address.",
                     validation: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 },
                 password: {
@@ -32,51 +35,33 @@ const LandingPage = () => {
                     isTouched: false,
                     placeholder: "Enter your password",
                     display: "Password",
-                    error: "Please enter a valid password",
+                    error: "Please enter a valid password.",
                     type: "password",
-                    validation: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+                    validation: /^.{8,}$/
                 }
             }
             setFormData(data);
         }
         else {
             data = {
-                firstName: {
-                    value: null,
-                    isValid: false,
-                    isTouched: false,
-                    placeholder: "Eg. John",
-                    display: "First name",
-                    error: "Please enter a valid first name",
-                    validation: /^[a-zA-Z ]{2,50}$/
-                },
-                lastName: {
-                    value: null,
-                    isValid: false,
-                    isTouched: false,
-                    placeholder: "Eg. Smith",
-                    display: "Last name",
-                    error: "Please enter a valid last name",
-                    validation: /^[a-zA-Z ]{2,50}$/
-                },
                 email: {
                     value: null,
                     isValid: false,
                     isTouched: false,
                     placeholder: "Eg. john@gmail.com",
                     display: "Email address",
-                    error: "Please enter a valid email address",
+                    error: "Please enter a valid email address.",
                     validation: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 },
                 password: {
                     value: null,
                     isValid: false,
                     isTouched: false,
-                    placeholder: "Enter your password",
+                    placeholder: "Enter a password",
                     display: "Password",
-                    error: "Please enter a valid password",
+                    error: "Please enter a valid password. (At least 1 upprcase, 1 lowercase, 1 number and 1 special character.",
                     type: "password",
-                    validation: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+                    validation: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/
                 }
             }
             setFormData(data);
@@ -102,6 +87,7 @@ const LandingPage = () => {
         setFormData(formDataCopy);
         checkValidity();
     }
+
     function checkValidity() {
         setIsFormValid(true);
         for (let key in formData) {
@@ -118,18 +104,22 @@ const LandingPage = () => {
     }
 
     function showPopup(type) {
+        setInLineError(null);
         setPopupType(type);
         setIsShowPopup(!isShowPopup);
         initialiseForm(type);
     }
-
+    
     function closePopup() {
+        setInLineError(null);
         setIsShowPopup(!isShowPopup);
         setPopupType('');
     }
 
-    function submit(type) {
-        
+    
+    let navigate = useNavigate();
+    function routeChange(path) { 
+        navigate(path);
     }
     
     const submit = (type) => {
@@ -171,9 +161,15 @@ const LandingPage = () => {
     }
     
     const formArray = createArray(formData);
-
+    
     return (
         <React.Fragment>
+            {
+                isLoading ?
+                <Loader></Loader>
+                :
+                null
+            }
             {
                 isShowPopup ?
                     <section>
@@ -203,6 +199,14 @@ const LandingPage = () => {
                                             </div>
                                         )
                                     })
+                                }
+                                {
+                                    inLineError ?
+                                        <section className='inline-error'>
+                                            <p className='inline-error-msg'>{inLineError}</p>
+                                        </section>
+                                    :
+                                        null
                                 }
                                 <button className="popup-button" onClick={() => submit(popupType)} disabled={!isFormValid}>
                                     {popupType}

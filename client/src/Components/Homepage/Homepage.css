@@ -1,3 +1,16 @@
 .homepage-wrapper {
+    display: flex;
+    height: 88vh;
+    background-color: white;
+}
 
+.homepage-wrapper .left-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 77%;
+}
+
+.homepage-wrapper .right-wrapper {
+    width: 23%;
 }

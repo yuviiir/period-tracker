@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './Nav.css';
 
+import Icon from '../Images/blood.png';
+import { PeriodTrackerContext } from '../../../Context/Context'; 
+import { useNavigate } from 'react-router';
+
 const Nav = (props) => {
+    const context = useContext(PeriodTrackerContext);
     let links = [];
     if (props?.indexPagePopup) {
         links = [
@@ -19,18 +24,14 @@ const Nav = (props) => {
         links = [
             {
                 name: "Home",
-                href: "/home"
+                onclick: () => routeChange('/home')
             },
             {
-                name: "Calender",
-                href: "/calender"
+                name: "Journal",
+                onclick: () => routeChange('/journal')
             },
             {
-                name: "History",
-                href: "/history"
-            }, 
-            {
-                name: "Logout",
+                name:  `Logout (${context?.email})`,
                 onclick: () => logout()
             },
         ]
@@ -49,19 +50,24 @@ const Nav = (props) => {
 
     }
     
+    let navigate = useNavigate();
+    function routeChange(path) { 
+        navigate(path);
+    }
+
     return (
         <React.Fragment>
             <header className='nav-wrapper'>
-                <aside>
-                    <h3 className='nav-logo'></h3>
-                    <h3 className='nav-header'>P E R I O D</h3>
+                <aside className='nav-logo-wrapper' onClick={() => goToHome()}>
+                    <h3><img className='nav-logo' src={Icon}></img></h3>
+                    <h3 className='nav-header'>S H A R K W E E K</h3>
                 </aside>
                 <ul className='nav-links'>
                     {
                         links.map((link, index) => {
                             return(
                                 <li key={index}>
-                                    <a className='nav-link' href={link?.href} onClick={link?.onclick}>{link.name}</a>
+                                    <a className='nav-link' onClick={link?.onclick}>{link.name}</a>
                                 </li>
                             )
                         })

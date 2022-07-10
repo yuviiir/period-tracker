@@ -48,35 +48,42 @@ router.route("")
 //     //CHANGE ENTIRE JOURNAL ENTRY
 // })
 
-// router
-// .route("")
-// .patch((req, res) => {
-//     let journalObject = req.body;
-//     let mood = req.body.mood;
-//     let symptoms = req.body.symptoms;
-//     let entry = req.body.entry;
+router
+.route("")
+.patch(async(req, res) => {
+  
+    const conn = new MongoClient(url);
+    await conn.connect();
 
-//     const query = {};
+    db = conn.db("PeriodTracker");
 
-//     if (!!mood){
-//         query.mood = mood;
-//     }
+  
+    let journalObject = req.body;
+    let mood = req.body.mood;
+    let symptoms = req.body.symptoms;
+    let entry = req.body.entry;
 
-//     if(!!symptoms){
-//         query.symptoms = symptoms;
-//     }
+    const query = {journalObject, mood, symptoms, entry};
 
-//     if(!!entry){
-//         query.entry = entry;
-//     }
+    if (!!mood){
+        query.mood = mood;
+    }
 
-//     let prevValues = { _id: journalObject._id };
+    if(!!symptoms){
+        query.symptoms = symptoms;
+    }
 
-//     dbo.collection("journal").updateOne(prevValues, {$set: {query}}, function(err, res) {
-//         if (err) throw err;
-//         console.log("1 document updated");
-//         db.close();
-//       });
-// })
+    if(!!entry){
+        query.entry = entry;
+    }
+
+    let prevValues = { _id: journalObject._id };
+
+    db.collection("journal").update(prevValues, {$set: {query}}, function(err, res) {
+        if (err) throw err;
+        console.log("1 document updated");
+        //db.close();
+      });
+})
 
 module.exports = router;

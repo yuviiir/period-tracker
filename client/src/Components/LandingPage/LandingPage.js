@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
-import Nav from '../Common/Nav/Nav';
+import React, { useContext, useState } from 'react';
 import './LandingPage.css';
+
+import Nav from '../Common/Nav/Nav';
+import { PeriodTrackerContext } from '../../Context/Context';
+import { useNavigate } from 'react-router';
+import { login, signUp } from '../../Services/Services';
+import Loader from '../Common/Loader/Loader'
 
 const LandingPage = () => {
     const [isShowPopup, setIsShowPopup] = useState(false);
@@ -126,7 +131,45 @@ const LandingPage = () => {
     function submit(type) {
         
     }
-
+    
+    const submit = (type) => {
+        context.setEmail(formData.email.value);
+        setIsLoading(true);
+        if (type === 'Login') {
+            login(formData.email.value, formData.password.value)
+            .then(res => {
+                    setInLineError(null);
+                    setIsLoading(false);
+                    context.setJwtToken(res.accessToken.jwtToken);
+                    console.log(res.accessToken.jwtToken);
+                    routeChange('/home');
+                })
+                .catch(err => {
+                    if (err.code === "UserNotConfirmedException")
+                        setInLineError("Please verify your account by clicking the link sent to your email.");
+                    else if (err.code === "NotAuthorizedException")
+                        setInLineError("Incorrct username or password.");
+                    else
+                        setInLineError("Error. Please try again later.");
+                    setIsLoading(false);
+                })
+            }
+        else {
+                signUp(formData.email.value, formData.password.value)
+                    .then(res => {
+                        setPopupType("Login");
+                        setIsLoading(false);
+                    })
+                    .catch(err => {
+                        if (err.code === "UsernameExistsException")
+                            setInLineError("The email entered already exists. Please log in.");
+                        else
+                            setInLineError("Error. Please try again later.");
+                        setIsLoading(false);
+                    })
+        }   
+    }
+    
     const formArray = createArray(formData);
 
     return (

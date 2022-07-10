@@ -37,7 +37,16 @@ const Nav = (props) => {
     }
     
     function logout() {
+        context.resetState();
         window.location.href = "/";
+    }
+
+    function goToHome() {
+        if (props?.indexPagePopup)
+            routeChange('/');
+        else
+            routeChange('/home');
+
     }
     
     return (

@@ -25,7 +25,7 @@ app.use('/history', historyRouter);
 app.use('/calendar', calendarRouter);
 app.use('/journal', journalRouter);
 app.use('/prediction', predictionRouter);
-
+app.use('/cycle', cycleRouter);
 
 app.all('*', (req, res) => {
     res.status(400).send('<h1> PAGE NOT FOUND! </h1>')

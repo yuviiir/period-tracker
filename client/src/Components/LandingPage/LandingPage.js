@@ -1,9 +1,7 @@
 import React, { useContext, useState } from 'react';
 import './LandingPage.css';
 
-import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 import Nav from '../Common/Nav/Nav';
-import UserPool from '../../UserPool';
 import { PeriodTrackerContext } from '../../Context/Context';
 import { useNavigate } from 'react-router';
 import { login, signUp } from '../../Services/Services';
@@ -130,9 +128,10 @@ const LandingPage = () => {
         if (type === 'Login') {
             login(formData.email.value, formData.password.value)
             .then(res => {
-                setInLineError(null);
-                setIsLoading(false);
-                context.setJwtToken(res.accessToken.jwtToken);
+                    setInLineError(null);
+                    setIsLoading(false);
+                    context.setJwtToken(res.accessToken.jwtToken);
+                    console.log(res.accessToken.jwtToken);
                     routeChange('/home');
                 })
                 .catch(err => {
@@ -161,7 +160,6 @@ const LandingPage = () => {
         }   
     }
     
-    console.log(context.jwtToken);
     const formArray = createArray(formData);
     
     return (

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -12,6 +12,16 @@ import { PeriodTrackerContext } from "./Context/Context";
 
 function App() {
   const context = useContext(PeriodTrackerContext);
+
+  useEffect(() => {
+    if (routes.includes(window.location.pathname)) {
+      if (!context.email || !context.jwtToken) {
+        context.resetState();
+        window.location.href = "/";
+      }
+    };
+  }, []);
+
 
   let routes = ["/home", "/journal"]
   return (

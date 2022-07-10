@@ -20,6 +20,7 @@ app.use(express.json());
 //Authentication middleware
 app.use(verificationHandler);
 
+app.use('/cycle', cycleRouter);
 app.use('/history', historyRouter);
 app.use('/calendar', calendarRouter);
 app.use('/journal', journalRouter);

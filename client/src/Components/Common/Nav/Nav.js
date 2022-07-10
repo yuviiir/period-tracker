@@ -38,7 +38,8 @@ const Nav = (props) => {
     }
     
     function logout() {
-        routeChange("/");
+        context.resetState();
+        window.location.href = "/";
     }
 
     function goToHome() {

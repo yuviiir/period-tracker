@@ -11,8 +11,10 @@ const PORT = process.env.PORT || 3000;
 //ROUTER TO API
 const historyRouter = require('./routes/history');
 const calendarRouter = require('./routes/calendar');
-const journalRouter = require('./routes/history');
-const predictionRouter = require('./routes/prediction')
+const journalRouter = require('./routes/journal');
+const predictionRouter = require('./routes/prediction');
+
+app.use(express.json());
 
 //Authentication middleware
 app.use(verificationHandler);

@@ -36,6 +36,10 @@ body {
     font-weight: 600;
 }
 
+.landingpage-button:hover {
+    background-color: #813f5a;
+}
+
 .popup-overlay {
     position: absolute;
     background: black;
@@ -43,6 +47,10 @@ body {
     height: 100%;
     opacity: 0.598;
     z-index: 100;
+}
+
+.popup-content {
+    text-align: left;
 }
 
 .popup {
@@ -129,7 +137,7 @@ body {
     align-items: center;
     height: 48px;
     color: white;
-    background: black;
+    background: #af426e;
     margin-top: 1em;
     border: none;
     border-radius: 10px;
@@ -138,8 +146,8 @@ body {
 }
 
 .popup-button:hover {
-    background-color: lightgray;
-    color: black;
+    background-color: #813f5a;
+    color: white;
 }
 
 .popup-button[disabled] {
@@ -159,4 +167,12 @@ body {
     display: flex;
     padding-top: 10px;
     margin: 0;
+}
+
+.inline-error-msg {
+    color: #BD0000;
+    text-align: center;
+    color: #BD0000;
+    padding: 0 3em;
+    font-weight: bold;
 }

@@ -1,5 +1,7 @@
 .homepage-wrapper {
     display: flex;
+    height: 88vh;
+    background-color: white;
 }
 
 .homepage-wrapper .left-wrapper {

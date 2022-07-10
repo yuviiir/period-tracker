@@ -35,6 +35,18 @@ li::before {
     vertical-align: middle;
 }
 
+.summary-wrapper li:nth-child(1)::before {
+    background-image: url('./cycle.png');
+}
+
+.summary-wrapper li:nth-child(2)::before {
+    background-image: url('./womb.png');
+}
+
+.summary-wrapper li:nth-child(3)::before {
+    background-image: url('./current.png');
+}
+
 li span {
     line-height: 3rem;
     vertical-align: middle;

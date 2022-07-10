@@ -1,5 +1,6 @@
 body {
-  background: rgb(255, 182, 194);  
+  background-image: linear-gradient(to right bottom, #ed1c7c, #EC9CBC);
+  height: 100vh;
 }
 
 .landingpage-content {
@@ -12,7 +13,7 @@ body {
 .landingpage-text {
     margin: 0;
     font-size: 3em;
-    color: #dd719c;
+    color: black;
     font-family: "Times New Roman", Times, serif;
     padding-bottom: 1em;
 }
@@ -27,12 +28,16 @@ body {
     align-items: center;
     height: 48px;
     color: white;
-    background: #dd719c;
+    background: #af426e;
     margin-top: 1em;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
+}
+
+.landingpage-button:hover {
+    background-color: #813f5a;
 }
 
 .popup-overlay {
@@ -42,6 +47,10 @@ body {
     height: 100%;
     opacity: 0.598;
     z-index: 100;
+}
+
+.popup-content {
+    text-align: left;
 }
 
 .popup {
@@ -128,7 +137,7 @@ body {
     align-items: center;
     height: 48px;
     color: white;
-    background: black;
+    background: #af426e;
     margin-top: 1em;
     border: none;
     border-radius: 10px;
@@ -137,8 +146,8 @@ body {
 }
 
 .popup-button:hover {
-    background-color: lightgray;
-    color: black;
+    background-color: #813f5a;
+    color: white;
 }
 
 .popup-button[disabled] {
@@ -158,4 +167,12 @@ body {
     display: flex;
     padding-top: 10px;
     margin: 0;
+}
+
+.inline-error-msg {
+    color: #BD0000;
+    text-align: center;
+    color: #BD0000;
+    padding: 0 3em;
+    font-weight: bold;
 }

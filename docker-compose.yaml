@@ -1,9 +1,11 @@
 version: '3.2'
 services:
-  my-app:
-    image: app:v1.1
-    build:
-      context: client
-      dockerfile: 'Dockerfile'
+  frontend:
+    image: johannsbbd/bbd-grad-period-tracker-frontend:v1.2
     ports:
-      - '8080:3000'
+      - 8080:3000
+  
+  backend:
+    image: johannsbbd/bbd-grad-period-tracker-backend:v1.2
+    ports:
+      - 3000:3000

@@ -1,0 +1,11 @@
+.journalpage-wrapper {
+    display: flex;
+}
+    
+.journalpage-wrapper .left-wrapper {
+    width: 23%;
+}
+
+.journalpage-wrapper .right-wrapper {
+    width: 77%;
+}

@@ -1,0 +1,34 @@
+.welcome-block-wrapper {
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 0.2rem 0.6rem 0 rgba(0,0,0,0.2);
+    flex-basis: 100%;
+    background-color: #f7f7f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.welcome-block-wrapper article {
+    display: inline-block;
+}
+
+.welcome-block-wrapper h1 {
+    font-size: 5rem;
+    margin: 0 auto;
+}
+
+.welcome-block-wrapper p {
+    font-size: 2rem;
+    margin: 0 auto;
+}
+
+img {
+    justify-self: flex-end;
+    width: 25rem;
+}
+
+span {
+    color: var(--begonia-pink);
+}

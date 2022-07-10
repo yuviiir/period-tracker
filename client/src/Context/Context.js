@@ -1,14 +1,14 @@
 import React, { createContext } from "react";
 
-export const Context = createContext();
+export const PeriodTrackerContext = createContext();
 
-export const PeriodTrackerConsumer = Context.Consumer;
+export const PeriodTrackerConsumer = PeriodTrackerContext.Consumer;
 
 export class PeriodTrackerProvider extends React.Component {
     state = {
-        email: "",
-        isLoading: false
-    }
+        email: null,
+        jwtToken: null
+    };
 
     setEmail = (value) => {
         this.setState({
@@ -17,25 +17,31 @@ export class PeriodTrackerProvider extends React.Component {
         })
     }
 
-    setIsLoading = (value) => {
+    setJwtToken = (value) => {
         this.setState({
             ...this.state,
-            isLoading: value
+            jwtToken: value
         })
     }
+
+    resetState = () => {
+        this.setState({ ...this.state })
+    }
+
     
     render() {
         return (
-            <Context.Provider
+            <PeriodTrackerContext.Provider
                 value={{
                     email: this.state.email,
-                    isLoading: this.state.isLoading,
+                    jwtToken: this.state.jwtToken,
 
                     setEmail: this.setEmail,
-                    setIsLoading: this.setIsLoading
+                    setJwtToken: this.setJwtToken,
+                    resetState: this.resetState
                 }}
             >
                 {this.props.children}
-            </Context.Provider>
+            </PeriodTrackerContext.Provider>
         )}
 }

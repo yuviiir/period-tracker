@@ -4,14 +4,19 @@ import './LandingPage.css';
 import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 import Nav from '../Common/Nav/Nav';
 import UserPool from '../../UserPool';
-import { Context } from '../../Context/Context';
+import { PeriodTrackerContext } from '../../Context/Context';
+import { useNavigate } from 'react-router';
+import { login, signUp } from '../../Services/Services';
+import Loader from '../Common/Loader/Loader'
 
 const LandingPage = () => {
-    const context = useContext(Context);
+    const context = useContext(PeriodTrackerContext);
     const [isShowPopup, setIsShowPopup] = useState(false);
     const [popupType, setPopupType] = useState('');
     const [formData, setFormData] = useState({});
     const [isFormValid, setIsFormValid] = useState(false);
+    const [inLineError, setInLineError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     function initialiseForm(type) {
         let data;
@@ -84,6 +89,7 @@ const LandingPage = () => {
         setFormData(formDataCopy);
         checkValidity();
     }
+
     function checkValidity() {
         setIsFormValid(true);
         for (let key in formData) {
@@ -100,62 +106,72 @@ const LandingPage = () => {
     }
 
     function showPopup(type) {
+        setInLineError(null);
         setPopupType(type);
         setIsShowPopup(!isShowPopup);
         initialiseForm(type);
     }
-
+    
     function closePopup() {
+        setInLineError(null);
         setIsShowPopup(!isShowPopup);
         setPopupType('');
     }
 
-    function submit(type) {
-        context.setIsLoading(true);
-        if (type === 'Login') {
-            const user = new CognitoUser({
-                Username: formData.email.value,
-                Pool: UserPool
-            })
-
-            const authDetails = new AuthenticationDetails({
-                Username: formData.email.value,
-                Password: formData.password.value
-            })
-
-            user.authenticateUser(authDetails, {
-                onSuccess: (data) => {
-                    console.log("success", data);
-                    context.setIsLoading(false);
-                    window.location.href = "/home";
-                },
-                onFailure: (data) => {
-                    console.log("failure", data);
-                    context.setIsLoading(false);
-                },
-                newPasswordRequired: (data) => {
-                    console.log("newPassword", data)
-                    context.setIsLoading(false);
-                }
-            })
-        }
-        else {
-            UserPool.signUp(formData.email.value, formData.password.value, [], null, (err, data) => {
-                if (err) {
-                    console.log(err);
-                }
-                console.log(data);
-                setPopupType("Login");
-                context.setIsLoading(false);
-            })
-        }
-        
+    
+    let navigate = useNavigate();
+    function routeChange(path) { 
+        navigate(path);
     }
-
+    
+    const submit = (type) => {
+        context.setEmail(formData.email.value);
+        setIsLoading(true);
+        if (type === 'Login') {
+            login(formData.email.value, formData.password.value)
+            .then(res => {
+                setInLineError(null);
+                setIsLoading(false);
+                context.setJwtToken(res.accessToken.jwtToken);
+                    routeChange('/home');
+                })
+                .catch(err => {
+                    if (err.code === "UserNotConfirmedException")
+                        setInLineError("Please verify your account by clicking the link sent to your email.");
+                    else if (err.code === "NotAuthorizedException")
+                        setInLineError("Incorrct username or password.");
+                    else
+                        setInLineError("Error. Please try again later.");
+                    setIsLoading(false);
+                })
+            }
+        else {
+                signUp(formData.email.value, formData.password.value)
+                    .then(res => {
+                        setPopupType("Login");
+                        setIsLoading(false);
+                    })
+                    .catch(err => {
+                        if (err.code === "UsernameExistsException")
+                            setInLineError("The email entered already exists. Please log in.");
+                        else
+                            setInLineError("Error. Please try again later.");
+                        setIsLoading(false);
+                    })
+        }   
+    }
+    
+    console.log(context.jwtToken);
     const formArray = createArray(formData);
-
+    
     return (
         <React.Fragment>
+            {
+                isLoading ?
+                <Loader></Loader>
+                :
+                null
+            }
             {
                 isShowPopup ?
                     <section>
@@ -185,6 +201,14 @@ const LandingPage = () => {
                                             </div>
                                         )
                                     })
+                                }
+                                {
+                                    inLineError ?
+                                        <section className='inline-error'>
+                                            <p className='inline-error-msg'>{inLineError}</p>
+                                        </section>
+                                    :
+                                        null
                                 }
                                 <button className="popup-button" onClick={() => submit(popupType)} disabled={!isFormValid}>
                                     {popupType}

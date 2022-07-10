@@ -15,7 +15,7 @@ async function getConnection(){
 
     } catch (e) {
         console.error(e);
-        db.close();
+        //db.close();
     }
 }
 

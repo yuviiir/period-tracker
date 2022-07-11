@@ -32,13 +32,51 @@ const moodObject = [
   "worried",
 ];
 
+function validateMood(moodObj) {
+  if (!!moodObj) {
+    let isMoodValid = false;
+
+    moodObject.forEach((moods) => {
+      if (moods == moodObj) {
+        isMoodValid = true;
+      }
+    });
+
+    if (isMoodValid) {
+      return moodObj;
+    } else {
+      throw "The mood you are trying to insert is invalid.";
+    }
+  }
+}
+
+function validateSymptoms(symptomsObj) {
+  if (!!symptomsObj) {
+    let symptomsCounter = 0;
+    let symptomsLength = symptomsObj.length;
+    for (let i = 0; i < symptomsLength; i++) {
+      symptomsObject.forEach((symptoms) => {
+        if (symptoms == symptomsObj[i]) {
+          symptomsCounter++;
+        }
+      });
+    }
+
+    if (symptomsCounter !== symptomsLength) {
+      throw "The symptom being inserted into the database is not found";
+    } else {
+      return symptomsObj;
+    }
+  }
+}
+
 router
   .route("/") //THIS IS TO SHOW THE MONTH VIEW OF THE CALENDAR
   .post(async (req, res) => {
     try {
       let username = res.locals.username;
-      let date = req.body.date;
-      let cycleObject = req.body;
+      let date = new Date(req.body.date);
+      let journalObject = req.body;
       let symptoms = [];
       let mood = "";
 
@@ -52,48 +90,23 @@ router
         return;
       }
 
-      if (!!cycleObject.symptoms) {
-        let symptomsCounter = 0;
-        let symptomsLength = cycleObject.symptoms.length;
-        for (let i = 0; i < symptomsLength; i++) {
-          symptomsObject.forEach((symptoms) => {
-            if (symptoms == cycleObject.symptoms[i]) {
-              symptomsCounter++;
-            }
-          });
+      if (await db.collection("journal").findOne())
+        try {
+          mood = validateMood(journalObject.mood);
+        } catch (e) {
+          res.status(400).send(e);
         }
 
-        if (symptomsCounter !== symptomsLength) {
-          return res
-            .status(400)
-            .send("The symptom being inserted into the database is not found");
-        } else {
-          symptoms = cycleObject.symptoms;
-        }
-      }
-
-      if (!!cycleObject.mood) {
-        let isMoodValid = false;
-
-        moodObject.forEach((moods) => {
-          if (moods == cycleObject.mood) {
-            isMoodValid = true;
-          }
-        });
-
-        if (isMoodValid) {
-          mood = cycleObject.mood;
-        } else {
-          return res
-            .status(400)
-            .send("The mood you are trying to inserted is invalid.");
-        }
+      try {
+        symptoms = validateSymptoms(journalObject.symptoms);
+      } catch (e) {
+        res.status(400).send(e);
       }
 
       let cycleDetails = {
         username: username,
         date: date,
-        entry: cycleObject.entry,
+        entry: journalObject.entry,
         symptoms: symptoms,
         mood: mood,
       };
@@ -105,49 +118,67 @@ router
     } catch (e) {
       res.status(500).send({ err: "Internal db error on query: " + e });
     }
+  })
+
+  .patch(async (req, res) => {
+    try {
+      let journalObject = req.body;
+      let date = journalObject.date;
+      let username = res.locals.username;
+      let mood = undefined;
+      let symptoms = undefined;
+
+      const conn = new MongoClient(url);
+      await conn.connect();
+
+      db = conn.db("PeriodTracker");
+
+      if (!db) {
+        res.status(500).send({ err: "Internal db error on get connection" });
+        return;
+      }
+
+      if (!!journalObject.mood) {
+        try {
+          mood = validateMood(journalObject.mood);
+        } catch (e) {
+          res.status(400).send(e);
+        }
+      }
+
+      if (!!journalObject.symptoms) {
+        try {
+          symptoms = validateSymptoms(journalObject.symptoms);
+        } catch (e) {
+          res.status(400).send(e);
+        }
+      }
+
+      let prevValues = { username: username, date: date };
+
+      console.log("PREV VALUES", prevValues);
+      console.log("USERNAME", username);
+      let query = {
+        $set: {
+          entry: journalObject.entry,
+          symptoms: symptoms,
+          mood: mood,
+        },
+      };
+
+      db.collection("journal").updateOne(
+        prevValues,
+        query,
+        function (err, res) {
+          if (err) throw err;
+          console.log("1 document updated");
+        }
+      );
+
+      res.status(200).send("Document has been updated");
+    } catch (e) {
+      res.status(500).send({ err: "Internal db error on query: " + e });
+    }
   });
-
-// .put((req,res) => {
-//     let calendarDate = req.params.date;
-//     //CHANGE ENTIRE JOURNAL ENTRY
-// })
-
-router
-.route("")
-.patch(async(req, res) => {
-  
-    const conn = new MongoClient(url);
-    await conn.connect();
-
-    db = conn.db("PeriodTracker");
-
-  
-    let journalObject = req.body;
-    let mood = req.body.mood;
-    let symptoms = req.body.symptoms;
-    let entry = req.body.entry;
-
-    const query = {journalObject, mood, symptoms, entry};
-
-    if (!!mood){
-        query.mood = mood;
-    }
-
-    if(!!symptoms){
-        query.symptoms = symptoms;
-    }
-
-    if(!!entry){
-        query.entry = entry;
-    }
-
-    let prevValues = { _id: journalObject._id };
-
-    db.collection("journal").update(prevValues, {$set: {query}}, function(err, res) {
-        if (err) throw err;
-        console.log("1 document updated");
-        //db.close();
-      });
-})
 
 module.exports = router;

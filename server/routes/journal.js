@@ -32,6 +32,8 @@ const moodObject = [
   "worried",
 ];
 
+const flowStrengthObj = ["Light", "Medium", "Heavy"];
+
 function validateMood(moodObj) {
   if (!!moodObj) {
     let isMoodValid = false;
@@ -70,6 +72,22 @@ function validateSymptoms(symptomsObj) {
   }
 }
 
+function validateFlowStrength(flowStrength) {
+  let isFlowValid = false;
+  flowStrengthObj.forEach((flow) => {
+    console.log(flowStrength.toUpperCase(), flow.toUpperCase());
+    if (flowStrength.toUpperCase() == flow.toUpperCase()) {
+      isFlowValid = true;
+    }
+  });
+
+  if (!isFlowValid) {
+    throw "The period flow is invalid.";
+  } else {
+    return flowStrength;
+  }
+}
+
 router
   .route("/") //THIS IS TO SHOW THE MONTH VIEW OF THE CALENDAR
   .post(async (req, res) => {
@@ -79,6 +97,10 @@ router
       let journalObject = req.body;
       let symptoms = [];
       let mood = "";
+      let periodDateType = journalObject.periodDateType;
+
+      console.log("PERIOD DATE TYPE", periodDateType);
+      let flowStrength = "";
 
       const conn = new MongoClient(url);
       await conn.connect();
@@ -90,28 +112,50 @@ router
         return;
       }
 
-      if (await db.collection("journal").findOne())
+      if (journalObject.mood)
         try {
           mood = validateMood(journalObject.mood);
         } catch (e) {
           res.status(400).send(e);
+          return;
         }
 
       try {
         symptoms = validateSymptoms(journalObject.symptoms);
       } catch (e) {
         res.status(400).send(e);
+        return;
       }
 
-      let cycleDetails = {
+      if (periodDateType < 0 || periodDateType > 3) {
+        res.status(400).send("The period date type is invalid");
+        return;
+      }
+
+      try {
+        if (
+          periodDateType > 0 &&
+          periodDateType < 4 &&
+          !!journalObject.flowStrength
+        ) {
+          flowStrength = validateFlowStrength(journalObject.flowStrength);
+        }
+      } catch (e) {
+        res.status(400).send(e);
+        return;
+      }
+
+      let journal = {
         username: username,
         date: date,
-        entry: journalObject.entry,
+        notes: journalObject.notes,
         symptoms: symptoms,
         mood: mood,
+        period_date_type: periodDateType,
+        flow_strength: flowStrength,
       };
 
-      await db.collection("journal").insertOne(cycleDetails, (err, res) => {
+      await db.collection("journal").insertOne(journal, (err, res) => {
         err ? console.log(err) : console.log("INSERTED");
       });
       res.status(200).send("Period Cycle have been recorded");
@@ -160,7 +204,7 @@ router
       console.log("USERNAME", username);
       let query = {
         $set: {
-          entry: journalObject.entry,
+          notes: journalObject.notes,
           symptoms: symptoms,
           mood: mood,
         },

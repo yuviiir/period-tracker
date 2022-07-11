@@ -1,48 +1,112 @@
-const express = require('express');
+const express = require("express");
 //const { route } = require('./calendar');
 const router = express.Router();
 
 //DB CONNECTION
-const {getConnection} = require('../connection');
+const { getConnection } = require("../connection");
 
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require("mongodb");
 const url = process.env.MONGO_URL;
 
+const symptomsObject = [
+  "abdominal-cramps",
+  "bloating",
+  "body-aches",
+  "breakouts",
+  "food-cravings",
+  "headache",
+  "insomnia",
+  "mood-swings",
+  "tender-breasts",
+];
 
-// router 
-// .route("/:date")
-// .get((req, res) => { //NEEDS MODIFICATION, THIS IS TO GET A DAYS JOURNAL ENTRY
-//     let calendarDate = req.params.date;
-    
-//     //DB QUERY COMES HERE
-// })
+const moodObject = [
+  "angry",
+  "annoyed",
+  "excited",
+  "happy",
+  "neutral",
+  "sad",
+  "sick",
+  "tired",
+  "worried",
+];
 
-router.route("")
-.post(async(req,res) => {
-    console.log("Hit fucken route");
-    
-    const conn = new MongoClient(url);
-    await conn.connect();
+router
+  .route("/") //THIS IS TO SHOW THE MONTH VIEW OF THE CALENDAR
+  .post(async (req, res) => {
+    try {
+      let username = res.locals.username;
+      let date = req.body.date;
+      let cycleObject = req.body;
+      let symptoms = [];
+      let mood = "";
 
-    db = conn.db("PeriodTracker");
+      const conn = new MongoClient(url);
+      await conn.connect();
 
-    let username = res.locals.username;
-    let calendarDate = req.body.calendarDate;
-    let symptoms = req.body.symptoms;
-    let mood = req.body.mood;
+      db = conn.db("PeriodTracker");
 
-    const postQuery = {username, date:calendarDate, symptoms, mood};
+      if (!db) {
+        res.status(500).send({ err: "Internal db error on get connection" });
+        return;
+      }
 
+      if (!!cycleObject.symptoms) {
+        let symptomsCounter = 0;
+        let symptomsLength = cycleObject.symptoms.length;
+        for (let i = 0; i < symptomsLength; i++) {
+          symptomsObject.forEach((symptoms) => {
+            if (symptoms == cycleObject.symptoms[i]) {
+              symptomsCounter++;
+            }
+          });
+        }
 
-    db.collection("journal").insertOne(postQuery, function(err, res) {
-        if (err) throw err;
-        console.log("1 document updated");
-        db.close();
+        if (symptomsCounter !== symptomsLength) {
+          return res
+            .status(400)
+            .send("The symptom being inserted into the database is not found");
+        } else {
+          symptoms = cycleObject.symptoms;
+        }
+      }
+
+      if (!!cycleObject.mood) {
+        let isMoodValid = false;
+
+        moodObject.forEach((moods) => {
+          if (moods == cycleObject.mood) {
+            isMoodValid = true;
+          }
+        });
+
+        if (isMoodValid) {
+          mood = cycleObject.mood;
+        } else {
+          return res
+            .status(400)
+            .send("The mood you are trying to inserted is invalid.");
+        }
+      }
+
+      let cycleDetails = {
+        username: username,
+        date: date,
+        entry: cycleObject.entry,
+        symptoms: symptoms,
+        mood: mood,
+      };
+
+      await db.collection("journal").insertOne(cycleDetails, (err, res) => {
+        err ? console.log(err) : console.log("INSERTED");
       });
+      res.status(200).send("Period Cycle have been recorded");
+    } catch (e) {
+      res.status(500).send({ err: "Internal db error on query: " + e });
+    }
+  });
 
-    res.status(200).send("COOLIO");
-
-})
 // .put((req,res) => {
 //     let calendarDate = req.params.date;
 //     //CHANGE ENTIRE JOURNAL ENTRY

@@ -1,3 +1,4 @@
+const { json } = require("express");
 const express = require("express");
 const router = express.Router();
 const { MongoClient } = require("mongodb");
@@ -40,20 +41,19 @@ router.route("/all").get(async (req, res) => {
   }
 
   try {
-    let mongoRes = await db.collection("cycle").find({ username: username });
+    let mongoRes = await db.collection("cycle").find({ username: username }).toArray();
 
-    res.status(200).send(mongoRes);
+    res.status(200).send(JSON.stringify(mongoRes));
   } catch (e) {
     res.status(500).send({ err: "Internal db error on query: " + e });
-  } finally {
-    db.close();
-  }
+  } 
 });
 
 router
-  .route("/:date") //THIS IS TO SHOW THE MONTH VIEW OF THE CALENDAR
+  .route("/") //THIS IS TO SHOW THE MONTH VIEW OF THE CALENDAR
   .post(async (req, res) => {
-    let date = req.params.date;
+    //let date = req.params.date;
+    let date = new Date("02-Sept-2022");
     let cycleObject = req.body;
     let symptoms = [];
     let mood = "";
@@ -106,9 +106,7 @@ router
       res.status(200).send("Period Cycle Details have been recorded");
     } catch (e) {
       res.status(500).send({ err: "Internal db error on query: " + e });
-    } finally {
-      db.close();
-    }
+    } 
   });
 
 module.exports = router;

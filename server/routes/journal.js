@@ -75,7 +75,6 @@ function validateSymptoms(symptomsObj) {
 function validateFlowStrength(flowStrength) {
   let isFlowValid = false;
   flowStrengthObj.forEach((flow) => {
-    console.log(flowStrength.toUpperCase(), flow.toUpperCase());
     if (flowStrength.toUpperCase() == flow.toUpperCase()) {
       isFlowValid = true;
     }
@@ -99,7 +98,6 @@ router
       let mood = "";
       let periodDateType = journalObject.periodDateType;
 
-      console.log("PERIOD DATE TYPE", periodDateType);
       let flowStrength = "";
 
       const conn = new MongoClient(url);
@@ -167,10 +165,12 @@ router
   .patch(async (req, res) => {
     try {
       let journalObject = req.body;
-      let date = journalObject.date;
+      let date = new Date(journalObject.date);
       let username = res.locals.username;
       let mood = undefined;
       let symptoms = undefined;
+      let periodDateType = journalObject.periodDateType;
+      let flowStrength = "";
 
       const conn = new MongoClient(url);
       await conn.connect();
@@ -187,6 +187,7 @@ router
           mood = validateMood(journalObject.mood);
         } catch (e) {
           res.status(400).send(e);
+          return;
         }
       }
 
@@ -195,18 +196,36 @@ router
           symptoms = validateSymptoms(journalObject.symptoms);
         } catch (e) {
           res.status(400).send(e);
+          return;
         }
       }
 
-      let prevValues = { username: username, date: date };
+      if (periodDateType < 0 || periodDateType > 3) {
+        res.status(400).send("The period date type is invalid");
+        return;
+      }
 
-      console.log("PREV VALUES", prevValues);
-      console.log("USERNAME", username);
+      try {
+        if (
+          periodDateType > 0 &&
+          periodDateType < 4 &&
+          !!journalObject.flowStrength
+        ) {
+          flowStrength = validateFlowStrength(journalObject.flowStrength);
+        }
+      } catch (e) {
+        res.status(400).send(e);
+        return;
+      }
+
+      let prevValues = { username: username, date: date };
       let query = {
         $set: {
           notes: journalObject.notes,
           symptoms: symptoms,
           mood: mood,
+          period_date_type: periodDateType,
+          flow_strength: flowStrength,
         },
       };
 

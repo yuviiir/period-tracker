@@ -23,23 +23,37 @@ router.route("").get(async (req, res) => {
         .collection("journal").find({ username: username })
         .toArray();
 
-        const sortedAsc = mongoRes.sort(
-          (objA, objB) => Number(objA.date) - Number(objB.date),
-        );
+      const sortedAsc = mongoRes.sort(
+        (objA, objB) => Number(objA.date) - Number(objB.date),
+      );
 
-        const sortedDesc = mongoRes.sort(
-          (objA, objB) => Number(objB.date) - Number(objA.date),
-        );
+      const sortedDesc = mongoRes.sort(
+        (objA, objB) => Number(objB.date) - Number(objA.date),
+      );
 
-      let avgCycleLength = AvgCycleLength(sortedAsc);
-      let dayInCylce = DayInCylce(sortedDesc);
-      let avgPeriodLen = avgPeriodLen(sortedAsc);
+      let avgCycleLength = 0;
+      let dayInCycle = -1;
+      let avgPeriodLength = 0;
+
+      try {
+        avgCycleLength = AvgCycleLength(sortedAsc);
+      } catch {}
+
+      try {
+        dayInCycle = DayInCylce(sortedDesc);
+      } catch {}
+
+      try {
+        avgPeriodLength = AvgPeriodLen(sortedAsc);
+      } catch (err) {
+        console.log("Error" + err);
+      }
 
       res.status(200).send({
         avgCycleLength: avgCycleLength,
-        dayInCylce: dayInCylce,
-        avgPeriodLen: avgPeriodLen
-      
+        dayInCycle: dayInCycle,
+        avgPeriodLength: avgPeriodLength,
+        nextPeriodDay: avgPeriodLength - dayInCycle
       });
 
     } catch (e) {
@@ -57,6 +71,7 @@ router.route("").get(async (req, res) => {
     let endDate;
 
     periodData.forEach(element => {
+      //Ignore bad spelling
       let perioddate = element.periodDateType
 
       if(perioddate == 1 && !startDate) //Start
@@ -113,7 +128,7 @@ router.route("").get(async (req, res) => {
     return diffDays;
   }
 
-  function avgPeriodLen(periodData)
+  function AvgPeriodLen(periodData)
   {
     let lengthArray = [];
 
@@ -122,21 +137,28 @@ router.route("").get(async (req, res) => {
     periodData.forEach(element => {
       let perioddate = element.periodDateType
 
-      if(perioddate == 1 && !startDate) //Start
+      if(perioddate == 1 && !prevStartDate) //Start
       {
-        startDate = element.date;
-        console.log("startDate: " + startDate);
+        prevStartDate = element.date;
+        console.log("Found prev day: " + prevStartDate);
+        return;
       }
       
-      if(!!startDate && !!endDate)
+      if(!!prevStartDate && perioddate == 1) //Have prev and have current
       {
-        const diffTime = Math.abs(new Date(endDate) - new Date(startDate));
+        const diffTime = Math.abs(new Date(element.date) - new Date(prevStartDate));
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         lengthArray.push(diffDays);
 
-        startDate = null;
+        prevStartDate = null;
       }
     });
+
+    let resultSum = lengthArray.reduce((partialSum, a) => partialSum + a, 0);
+
+    console.log("SUM:" + resultSum);
+    
+    return resultSum/lengthArray.length;
   }
 
 module.exports = router;

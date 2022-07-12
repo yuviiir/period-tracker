@@ -43,6 +43,7 @@ const EntryForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isShowPopup, setIsShowPopup] = useState(false);
     const [popupText, setPopupText] = useState("");
+    const [datesArr, setDatesArr] = useState([]);
     
     let dayFound = false;
 
@@ -196,7 +197,6 @@ const EntryForm = () => {
             let entryDate = entry.date.substring(0, 10);
             if (dateSelected == entryDate) {
                 dayFound = true;
-                console.log(entry.periodDateType)
                 if (entry.periodDateType != 0)
                     togglePeriodInfo()
                 setDayEntry(entry);
@@ -212,17 +212,14 @@ const EntryForm = () => {
     const SaveEntry = () => {
         setIsLoading(true);
         if (dayEntry._id) {
-            console.log("FOUND")
             updateJournalEntry(dayEntry, context.jwtToken)
             .then(res => {
-                console.log(res)
                 getAllEntries();
                 setIsLoading(false);
                 setPopupText("Successfully updated! 😊")
                 setIsShowPopup(true)
             })
             .catch(err => {
-                console.log(err)
                 setIsLoading(false);
                 setPopupText("An error occurred. Please try again. 😒")
                 setIsShowPopup(true)
@@ -232,14 +229,12 @@ const EntryForm = () => {
         else {
             postJournalEntry(dayEntry, context.jwtToken)
             .then(res => {
-                console.log(res)
                 getAllEntries();
                 setIsLoading(false);
                 setPopupText("Successfully added! 😊")
                 setIsShowPopup(true)
             })
             .catch(err => {
-                console.log(err)
                 setIsLoading(false);
                 setPopupText("An error occurred. Please try again. 😒")
                 setIsShowPopup(true)
@@ -267,9 +262,16 @@ const EntryForm = () => {
         setDateSet(new Date())
         getAllEntries();
     }, []);
+
     
     useEffect(() => {
         getDayEntry(dateSet);
+        let datesArrTemp = [];
+        allEntries.map(entry => {
+            let date = new Date(entry.date);
+            datesArrTemp.push(`${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 9 ? "0" : ""}${date.getDate()}`);
+        })
+        setDatesArr(datesArrTemp)
     }, [allEntries]);
 
     return (
@@ -305,7 +307,16 @@ const EntryForm = () => {
                 <section id='col-1'>
                     <section id='calendar' className='form-info'>
                         <h1>Calendar</h1>
-                        <Calendar value={dateSet} onChange={onChange}/>
+                        <Calendar 
+                            value={dateSet} 
+                            onChange={onChange}
+                            tileClassName={({ date, view }) => {
+                                if(datesArr?.includes((`${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 9 ? "0" : ""}${date.getDate()}`))){
+                                    return  'highlight'
+                                }
+                            }}
+                            maxDate={new Date()}
+                        />
                     </section>
 
                     
@@ -319,18 +330,18 @@ const EntryForm = () => {
                             <p className='form-desc'>What day of your period was it?</p>
                             <fieldset id="period-day">
                                 <input type="radio" id='start' value="start" name="period-day" checked={dayEntry?.periodDateType == 1} onChange={() => periodDayClick(1)}/>
-                                <label for="start">Start day</label>
+                                <label htmlFor="start">Start day</label>
                                 <input type="radio" id='end' value="end" name="period-day" checked={dayEntry?.periodDateType == 2} onChange={() => periodDayClick(2)}/>
-                                <label for="end">End day</label>
+                                <label htmlFor="end">End day</label>
                                 <input type="radio" id='normal' value="normal" name="period-day" checked={dayEntry?.periodDateType == 3} onChange={() => periodDayClick(3)}/>
-                                <label for="normal">Just another day</label>
+                                <label htmlFor="normal">Just another day</label>
                             </fieldset>
 
                             <p className='form-desc'>What was your flow like?</p>
                             {
-                                flows.map((flow) => {
+                                flows.map((flow, index) => {
                                     return(
-                                        <article className={dayEntry?.flowStrength == flow.name ? 'flow selected-flow' : 'flow'} id={flow.name} onClick={() => periodFlowClick(flow.name)}>
+                                        <article key={index} className={dayEntry?.flowStrength == flow.name ? 'flow selected-flow' : 'flow'} id={flow.name} onClick={() => periodFlowClick(flow.name)}>
                                             <span>
                                             <img alt='period icon' src={flow.img}></img>
                                             <p>{flow.name}</p>
@@ -352,9 +363,9 @@ const EntryForm = () => {
                         <h1>Mood</h1>
                         <p className='form-desc'>How did you feel?</p>
                         {
-                            moods.map((mood) => {
+                            moods.map((mood, index) => {
                                 return(
-                                    <article className={dayEntry?.mood === mood.name ? 'mood selected-mood' : 'mood'} id={mood.name} onClick={() => moodClick(mood.name)}>
+                                    <article key={index} className={dayEntry?.mood === mood.name ? 'mood selected-mood' : 'mood'} id={mood.name} onClick={() => moodClick(mood.name)}>
                                         <span>
                                         <img alt='period icon' src={mood.img}></img>
                                         <p>{mood.name}</p>
@@ -371,9 +382,9 @@ const EntryForm = () => {
                         <h1>Symptoms</h1>
                         <p className='form-desc'>What did you experience?</p>
                         {
-                            symptoms.map((symptom) => {
+                            symptoms.map((symptom, index) => {
                                 return(
-                                    <article className={dayEntry?.symptoms?.includes(symptom.name) ? 'symptom selected-symptom' : 'symptom'} id={symptom.name} onClick={() => symptomClick(symptom.name)}>
+                                    <article key={index} className={dayEntry?.symptoms?.includes(symptom.name) ? 'symptom selected-symptom' : 'symptom'} id={symptom.name} onClick={() => symptomClick(symptom.name)}>
                                         <span>
                                         <img alt='period icon' src={symptom.img}></img>
                                         <p>{symptom.name}</p>

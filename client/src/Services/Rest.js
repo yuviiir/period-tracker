@@ -13,10 +13,10 @@ else {
 }
 
 config = {
-    allEvents: (jwt) =>
+    cycle: (jwt) =>
       axios({
         method: "GET",
-        url: `${path}/cycle/all`,
+        url: `${path}/cycle`,
         headers: {
             "token": jwt
         }

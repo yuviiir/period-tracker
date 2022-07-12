@@ -1,4 +1,4 @@
-import React, { useState, useEffect, StrictMode, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './EntryForm.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -23,24 +23,26 @@ import Breakouts from './SymptomIcons/breakouts.png';
 import Cravings from './SymptomIcons/food-cravings.png';
 import MoodSwings from './SymptomIcons/mood-swings.png';
 import Insomnia from './SymptomIcons/insomnia.png';
-import { getAllJournalEntries, postJournalEntry } from '../../../../Services/Services';
+import { getAllJournalEntries, postJournalEntry, updateJournalEntry } from '../../../../Services/Services';
 import { PeriodTrackerContext } from '../../../../Context/Context'
 import Loader from '../../../Common/Loader/Loader';
 
 const EntryForm = () => {
     const entry = {
         date: '',
-        mood: "",
+        mood: "Neutral",
         symptoms: [],
         notes: '',
         periodDateType: 0,
-        flowStrength: ""
+        flowStrength: "Light"
     };
     const context = useContext(PeriodTrackerContext);
     const [dateSet, setDateSet] = useState(new Date());
     const [dayEntry, setDayEntry] = useState({});
     const [allEntries, setAllEntries] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isShowPopup, setIsShowPopup] = useState(false);
+    const [popupText, setPopupText] = useState("");
     
     let dayFound = false;
 
@@ -194,6 +196,9 @@ const EntryForm = () => {
             let entryDate = entry.date.substring(0, 10);
             if (dateSelected == entryDate) {
                 dayFound = true;
+                console.log(entry.periodDateType)
+                if (entry.periodDateType != 0)
+                    togglePeriodInfo()
                 setDayEntry(entry);
             }
         })
@@ -206,8 +211,23 @@ const EntryForm = () => {
 
     const SaveEntry = () => {
         setIsLoading(true);
-        if (dayFound) {
-
+        if (dayEntry._id) {
+            console.log("FOUND")
+            updateJournalEntry(dayEntry, context.jwtToken)
+            .then(res => {
+                console.log(res)
+                getAllEntries();
+                setIsLoading(false);
+                setPopupText("Successfully updated! 😊")
+                setIsShowPopup(true)
+            })
+            .catch(err => {
+                console.log(err)
+                setIsLoading(false);
+                setPopupText("An error occurred. Please try again. 😒")
+                setIsShowPopup(true)
+                //error
+            });
         }
         else {
             postJournalEntry(dayEntry, context.jwtToken)
@@ -215,10 +235,14 @@ const EntryForm = () => {
                 console.log(res)
                 getAllEntries();
                 setIsLoading(false);
+                setPopupText("Successfully added! 😊")
+                setIsShowPopup(true)
             })
             .catch(err => {
                 console.log(err)
                 setIsLoading(false);
+                setPopupText("An error occurred. Please try again. 😒")
+                setIsShowPopup(true)
                 //error
             });
         }
@@ -233,6 +257,8 @@ const EntryForm = () => {
         })
         .catch(err => {
             setIsLoading(false);
+            setPopupText("An error occurred fetching your journal. Please try again later. 🤦‍♀️")
+            setIsShowPopup(true)
             //error
         });
     }
@@ -243,7 +269,7 @@ const EntryForm = () => {
     }, []);
     
     useEffect(() => {
-        getDayEntry(dateSet)
+        getDayEntry(dateSet);
     }, [allEntries]);
 
     return (
@@ -251,6 +277,27 @@ const EntryForm = () => {
             {
                 isLoading ?
                     <Loader></Loader>
+                :
+                    null
+            }
+                        {
+                isShowPopup ?
+                    <section>
+                        <section className="journal-popup-overlay"></section>
+                        <section className="journal-popup">
+                            <section className="journal-popup-controls">
+                                <button className="journal-popup-close" onClick={() => setIsShowPopup(!isShowPopup)}>X</button>
+                            </section>
+                            <section className="journal-popup-content">
+                                <h2 className="journal-popup-heading">{popupText}</h2>
+
+                                <button className="journal-popup-button" onClick={() => setIsShowPopup(!isShowPopup)}>
+                                    Cool
+                                </button>
+                            </section>
+                        </section>
+                    </section>
+
                 :
                     null
             }
@@ -302,7 +349,7 @@ const EntryForm = () => {
                     </section>
 
                     <section id='moods' className='form-info'>
-                        <h1>Moods</h1>
+                        <h1>Mood</h1>
                         <p className='form-desc'>How did you feel?</p>
                         {
                             moods.map((mood) => {
@@ -343,12 +390,12 @@ const EntryForm = () => {
                         <textarea placeholder='Give us the tea sis ☕' value={dayEntry?.notes} onChange={(e) => setNotes(e.target.value)}></textarea>
                     </section>
 
-                    <section id='buttons'>
-                        <button onClick={SaveEntry}>Save</button>
-                    </section>
 
 
                 </section>
+            </section>
+            <section id='buttons'>
+                <button className="journal-button" onClick={SaveEntry}>Save</button>
             </section>
 
         </React.Fragment>

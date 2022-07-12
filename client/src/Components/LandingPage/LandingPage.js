@@ -183,7 +183,7 @@ const LandingPage = () => {
                                 {
                                     formArray.map((item, index) => {
                                         return (
-                                            <div key={item.key}>
+                                            <section key={item.key}>
                                                 <article className='popup-input'>
                                                     <p className='popup-input-label'>{item.data.display}</p>
                                                     <input className={!item.data.isValid && item.data.isTouched ? "popup-input-box popup-input-box-invalid" : "popup-input-box"} type={item?.data?.type} onKeyUp={(e) => setValue(e.target.value, item.key)}></input>
@@ -196,7 +196,7 @@ const LandingPage = () => {
                                                             null
                                                     }
                                                 </article>
-                                            </div>
+                                            </section>
                                         )
                                     })
                                 }

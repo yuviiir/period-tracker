@@ -173,8 +173,8 @@ router
         notes: journalObject.notes,
         symptoms: symptoms,
         mood: mood,
-        period_date_type: periodDateType,
-        flow_strength: flowStrength,
+        periodDateType: periodDateType,
+        flowStrength: flowStrength,
       };
 
       await db.collection("journal").insertOne(journal, (err, res) => {
@@ -248,8 +248,8 @@ router
           notes: journalObject.notes,
           symptoms: symptoms,
           mood: mood,
-          period_date_type: periodDateType,
-          flow_strength: flowStrength,
+          periodDateType: periodDateType,
+          flowStrength: flowStrength,
         },
       };
 

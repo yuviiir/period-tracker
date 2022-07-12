@@ -1,5 +1,4 @@
 .entry-form-wrapper {
-    padding: 1rem;
     margin: 1rem;
     display: flex;
     flex-direction: row;
@@ -13,6 +12,10 @@
     box-shadow: 0 0.2rem 0.6rem 0 rgba(0,0,0,0.2);
 }
 
+#notes, #moods {
+    margin-right: 0;
+}
+
 .form-info h1 {
     font-size: 1rem;
     margin-top: 0;
@@ -24,18 +27,6 @@
     font-weight: bold;
 }
 
-.react-calendar {
-    border: none !important;
-}
-
-.react-calendar__tile--now {
-    background: var(--lavendar-blush) !important;
-}
-
-.react-calendar__tile--active {
-    background: var(--begonia-pink) !important;
-    color: white !important;
-}
 
 #period-info {
     flex-grow: 1;
@@ -44,6 +35,7 @@
 #col-1, #col-2, #col-3 {
     height: 100%;
     display: inline-flex;
+    width: 100%;
 }
 
 
@@ -188,14 +180,119 @@ textarea:focus {
     border: 2px solid var(--begonia-pink);
 }
 
-#buttons button {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    position: relative;
-    bottom: 0;
+.journal-button {
+    display: flex;
+    width: 200px;
+    margin: auto;
+    margin-top: 3em;
+    margin-bottom: 3em;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    color: white;
+    background: #af426e;
+    margin-top: 1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
-#buttons {
-    margin-top: 10%;
+.journal-button:hover {
+    background-color: #813f5a;
+}
+
+.journal-popup-overlay {
+    position: absolute;
+    background: black;
+    width: 77%;
+    height: 88vh;
+    opacity: 0.598;
+    z-index: 100;
+}
+
+.journal-popup-content {
+    text-align: left;
+}
+
+.journal-popup {
+    position: absolute;
+    background: white;
+    border-radius: 20px;
+    z-index: 200;
+    animation: fadeIn 1s;
+    margin: 0 18.5%;
+    width: 40%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.journal-popup-close {
+    cursor: pointer;
+    background: white;
+    border: none;
+    width: 100%;
+    font-weight: bold;
+    font-size: 1em;
+    text-align: right;
+    margin-top: 25px;
+    padding-right: 25px;
+}
+
+.journal-popup-heading {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}
+
+.journal-popup-button {
+    display: flex;
+    width: 200px;
+    margin: auto;
+    margin-top: 3em;
+    margin-bottom: 4em;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    color: white;
+    background: #af426e;
+    margin-top: 1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.journal-popup-button:hover {
+    background-color: #813f5a;
+    color: white;
+}
+
+
+.react-calendar {
+    border: none !important;
+}
+
+.highlight {
+    background-color:  var(--beetroot-purple)  !important;
+    color: white;
+}
+
+.react-calendar__tile--now {
+    background: var(--lavendar-blush) !important;
+    color: black;
+}
+
+.react-calendar__tile--active {
+    background: var(--begonia-pink) !important;
+    color: white !important;
 }

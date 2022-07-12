@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import './Nav.css';
 
-import Icon from '../Images/blood.png';
+import Icon from '../Images/SharkWeekLogo.png';
 import { PeriodTrackerContext } from '../../../Context/Context'; 
 import { useNavigate } from 'react-router';
 
@@ -59,7 +59,7 @@ const Nav = (props) => {
         <React.Fragment>
             <header className='nav-wrapper'>
                 <aside className='nav-logo-wrapper' onClick={() => goToHome()}>
-                    <h3><img className='nav-logo' src={Icon}></img></h3>
+                    <img className='nav-logo' src={Icon}></img>
                     <h3 className='nav-header'>S H A R K W E E K</h3>
                 </aside>
                 <ul className='nav-links'>

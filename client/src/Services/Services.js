@@ -1,5 +1,47 @@
 import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 import UserPool from "../UserPool";
+import config from './Rest'
+
+export function getAllEvents(jwt) {
+    return new Promise((resolve, reject) => {
+        config.allEvents(jwt, (err, data) => {
+            if (err) {
+                reject(err)
+            }
+            else {
+                resolve(data)
+            }
+        })
+    })
+}
+
+export function getAllJournalEntries(jwt) {
+    return new Promise((resolve, reject) => {
+        config
+        .allJournalEntries(jwt)
+            .then(res => {
+                if (res.data)
+                    resolve(res.data)
+                else
+                    reject(res)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+}
+
+export function postJournalEntry(entry, jwt) {
+    return new Promise((resolve, reject) => {
+        config.addJournalEntry(entry, jwt)
+            .then(res => {
+                resolve(res)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+}
 
 export function signUp(username, password) {
     return new Promise((resolve, reject) => {

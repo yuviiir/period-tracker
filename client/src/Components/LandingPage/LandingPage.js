@@ -4,7 +4,7 @@ import './LandingPage.css';
 import Nav from '../Common/Nav/Nav';
 import { PeriodTrackerContext } from '../../Context/Context';
 import { useNavigate } from 'react-router';
-import { login, signUp } from '../../Services/Services';
+import { getAllEvents, login, postJournalEntry, signUp } from '../../Services/Services';
 import Loader from '../Common/Loader/Loader'
 
 const LandingPage = () => {
@@ -133,17 +133,17 @@ const LandingPage = () => {
                     context.setJwtToken(res.accessToken.jwtToken);
                     console.log(res.accessToken.jwtToken);
                     routeChange('/home');
-                })
-                .catch(err => {
-                    if (err.code === "UserNotConfirmedException")
-                        setInLineError("Please verify your account by clicking the link sent to your email.");
-                    else if (err.code === "NotAuthorizedException")
-                        setInLineError("Incorrct username or password.");
-                    else
-                        setInLineError("Error. Please try again later.");
-                    setIsLoading(false);
-                })
-            }
+            })
+            .catch(err => {
+                if (err.code === "UserNotConfirmedException")
+                    setInLineError("Please verify your account by clicking the link sent to your email.");
+                else if (err.code === "NotAuthorizedException")
+                    setInLineError("Incorrct username or password.");
+                else
+                    setInLineError("Error. Please try again later.");
+                setIsLoading(false);
+            })
+        }
         else {
                 signUp(formData.email.value, formData.password.value)
                     .then(res => {

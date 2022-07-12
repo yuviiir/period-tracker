@@ -1,4 +1,4 @@
-import React, { useState, useEffect, StrictMode } from 'react';
+import React, { useState, useEffect, StrictMode, useContext } from 'react';
 import './EntryForm.css';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -23,92 +23,76 @@ import Breakouts from './SymptomIcons/breakouts.png';
 import Cravings from './SymptomIcons/food-cravings.png';
 import MoodSwings from './SymptomIcons/mood-swings.png';
 import Insomnia from './SymptomIcons/insomnia.png';
-
-let entry = {
-    date: '',
-    periodInfo: {
-        period: true,
-        periodDay: 'end',
-        flow: 'Heavy',
-    },
-    moods: ['Happy', 'Tired'],
-    symptoms: ['Cramps', 'Mood Swings', 'Cravings'],
-    notes: 'I want sushi'
-}
+import { getAllJournalEntries, postJournalEntry } from '../../../../Services/Services';
+import { PeriodTrackerContext } from '../../../../Context/Context'
+import Loader from '../../../Common/Loader/Loader';
 
 const EntryForm = () => {
-    const [value, SetValue] = useState(new Date());
-    const [isShowPeriodInfo, setIsShowPeriodInfo] = useState(false);
-    const [dayEntry, setDayEntry] = useState({})
+    const entry = {
+        date: '',
+        mood: "",
+        symptoms: [],
+        notes: '',
+        periodDateType: 0,
+        flowStrength: ""
+    };
+    const context = useContext(PeriodTrackerContext);
+    const [dateSet, setDateSet] = useState(new Date());
+    const [dayEntry, setDayEntry] = useState({});
+    const [allEntries, setAllEntries] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    
+    let dayFound = false;
 
-    const OnChange = (date) => {
-        SetValue(date)
-        GetDayEntry(date)
+    const onChange = (date) => {
+        setDateSet(date)
+        getDayEntry(date)
     }
-
-    const TogglePeriodInfo = () => {
+    
+    const togglePeriodInfo = () => {
         let tempObj = {...dayEntry};
-        tempObj.periodInfo.period = !tempObj.periodInfo.period
-        if (!tempObj.periodInfo.period) {
-            tempObj.periodInfo.periodDay = ''
-            tempObj.periodInfo.flow = ''
-        }
+        if ([1, 2, 3].includes(tempObj?.periodDateType))
+            tempObj.periodDateType = 0;
+        else
+            tempObj.periodDateType = 1;
         setDayEntry(tempObj);
     }
 
     const periodDayClick = (day) => {
         let tempObj = {...dayEntry};
-        tempObj.periodInfo.periodDay = day
+        tempObj.periodDateType = day
         setDayEntry(tempObj);
     }
 
     function periodFlowClick(flow) {
         let tempObj = {...dayEntry};
-        tempObj.periodInfo.flow = flow
+        tempObj.flowStrength = flow
         setDayEntry(tempObj);
     }
 
     function moodClick(mood) {
         let tempObj = {...dayEntry};
-        if (tempObj.moods.includes(mood)) {
-            tempObj.moods.splice(tempObj.moods.indexOf(mood), 1)
-        }
-        else {
-            tempObj.moods.push(mood)
-        }
+        tempObj.mood = mood;
+        setDayEntry(tempObj);
+    }
+
+    function setNotes(text) {
+        let tempObj = {...dayEntry};
+        tempObj.notes = text;
         setDayEntry(tempObj);
     }
 
     function symptomClick(symptom) {
         let tempObj = {...dayEntry};
         if (tempObj.symptoms.includes(symptom)) {
-            tempObj.symptoms.splice(tempObj.symptom.indexOf(symptom), 1)
+            tempObj.symptoms.splice(tempObj.symptoms.indexOf(symptom), 1)
         }
         else {
             tempObj.symptoms.push(symptom)
         }
         setDayEntry(tempObj);
     }
-
-    const PopulateData = (entry) => {
-        setDayEntry(entry)
-    }
-
-    // get entry data from api
-    const GetDayEntry = (date) => {
-        console.log(date)
-    }
-
-    // post entry data to api
-    const SaveEntry = () => {
-        console.log(dayEntry)
-    }
-
-    // cancel changes made to entry
-    const CancelEntry = () => {
-
-    }
-
+    
     const flows = [
         {
             name: 'Light',
@@ -123,7 +107,7 @@ const EntryForm = () => {
             img: Heavy
         }
     ]
-
+    
     const moods = [
         {
             name: 'Happy',
@@ -162,7 +146,7 @@ const EntryForm = () => {
             img: Sick
         },
     ]
-
+    
     const symptoms = [
         {
             name: 'Cramps',
@@ -202,36 +186,96 @@ const EntryForm = () => {
         },
     ]
 
+
+    const getDayEntry = (date) => {
+        dayFound = false;
+        let dateSelected = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 9 ? "0" : ""}${date.getDate()}`;
+        allEntries?.map(entry => {
+            let entryDate = entry.date.substring(0, 10);
+            if (dateSelected == entryDate) {
+                dayFound = true;
+                setDayEntry(entry);
+            }
+        })
+        if (!dayFound) {
+            let tempObj = {...entry};
+            tempObj.date = dateSelected
+            setDayEntry(tempObj)
+        }
+    }
+
+    const SaveEntry = () => {
+        setIsLoading(true);
+        if (dayFound) {
+
+        }
+        else {
+            postJournalEntry(dayEntry, context.jwtToken)
+            .then(res => {
+                console.log(res)
+                getAllEntries();
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.log(err)
+                setIsLoading(false);
+                //error
+            });
+        }
+    }
+
+    function getAllEntries() {
+        setIsLoading(true);
+        getAllJournalEntries(context.jwtToken)
+        .then(res => {
+            setAllEntries(res);
+            setIsLoading(false);
+        })
+        .catch(err => {
+            setIsLoading(false);
+            //error
+        });
+    }
+    
     useEffect(() => {
-        // call api or anything
-        PopulateData(entry)
-        console.log("loaded");
-     });
+        setDateSet(new Date())
+        getAllEntries();
+    }, []);
+    
+    useEffect(() => {
+        getDayEntry(dateSet)
+    }, [allEntries]);
 
     return (
         <React.Fragment>
+            {
+                isLoading ?
+                    <Loader></Loader>
+                :
+                    null
+            }
             <section className='entry-form-wrapper'>
                 <section id='col-1'>
                     <section id='calendar' className='form-info'>
                         <h1>Calendar</h1>
-                        <Calendar value={value} onChange={OnChange}/>
+                        <Calendar value={dateSet} onChange={onChange}/>
                     </section>
 
                     
                         <section id='period-info' className='form-info'>
                         <h1>Period Information
-                            <input type="checkbox" id='period-checkbox' checked={dayEntry?.periodInfo?.period} onChange={TogglePeriodInfo}/>
+                            <input type="checkbox" id='period-checkbox' checked={[1, 2, 3].includes(dayEntry?.periodDateType)} onChange={togglePeriodInfo}/>
                         </h1>
                         
-                        { dayEntry?.periodInfo?.period ?   
+                        { [1, 2, 3].includes(dayEntry?.periodDateType) ?   
                             <article>
                             <p className='form-desc'>What day of your period was it?</p>
                             <fieldset id="period-day">
-                                <input type="radio" id='start' value="start" name="period-day" checked={dayEntry?.periodInfo?.periodDay == 'start'} onChange={() => periodDayClick('start')}/>
+                                <input type="radio" id='start' value="start" name="period-day" checked={dayEntry?.periodDateType == 1} onChange={() => periodDayClick(1)}/>
                                 <label for="start">Start day</label>
-                                <input type="radio" id='end' value="end" name="period-day" checked={dayEntry?.periodInfo?.periodDay == 'end'} onChange={() => periodDayClick('end')}/>
+                                <input type="radio" id='end' value="end" name="period-day" checked={dayEntry?.periodDateType == 2} onChange={() => periodDayClick(2)}/>
                                 <label for="end">End day</label>
-                                <input type="radio" id='normal' value="normal" name="period-day" checked={dayEntry?.periodInfo?.periodDay == 'normal'} onChange={() => periodDayClick('normal')}/>
+                                <input type="radio" id='normal' value="normal" name="period-day" checked={dayEntry?.periodDateType == 3} onChange={() => periodDayClick(3)}/>
                                 <label for="normal">Just another day</label>
                             </fieldset>
 
@@ -239,7 +283,7 @@ const EntryForm = () => {
                             {
                                 flows.map((flow) => {
                                     return(
-                                        <article className={dayEntry?.periodInfo?.flow == flow.name ? 'flow selected-flow' : 'flow'} id={flow.name} onClick={() => periodFlowClick(flow.name)}>
+                                        <article className={dayEntry?.flowStrength == flow.name ? 'flow selected-flow' : 'flow'} id={flow.name} onClick={() => periodFlowClick(flow.name)}>
                                             <span>
                                             <img alt='period icon' src={flow.img}></img>
                                             <p>{flow.name}</p>
@@ -263,7 +307,7 @@ const EntryForm = () => {
                         {
                             moods.map((mood) => {
                                 return(
-                                    <article className={dayEntry?.moods?.includes(mood.name) ? 'mood selected-mood' : 'mood'} id={mood.name} onClick={() => moodClick(mood.name)}>
+                                    <article className={dayEntry?.mood === mood.name ? 'mood selected-mood' : 'mood'} id={mood.name} onClick={() => moodClick(mood.name)}>
                                         <span>
                                         <img alt='period icon' src={mood.img}></img>
                                         <p>{mood.name}</p>
@@ -296,12 +340,11 @@ const EntryForm = () => {
                     <section id='notes' className='form-info'>
                         <h1>Notes</h1>
                         <p className='form-desc'>Take some time to reflect and look back on your day.</p>
-                        <textarea placeholder='Give us the tea sis ☕'></textarea>
+                        <textarea placeholder='Give us the tea sis ☕' value={dayEntry?.notes} onChange={(e) => setNotes(e.target.value)}></textarea>
                     </section>
 
                     <section id='buttons'>
                         <button onClick={SaveEntry}>Save</button>
-                        <button onClick={CancelEntry}>Cancel</button>
                     </section>
 
 

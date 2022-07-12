@@ -9,27 +9,27 @@ const { MongoClient } = require("mongodb");
 const url = process.env.MONGO_URL;
 
 const symptomsObject = [
-  "abdominal-cramps",
-  "bloating",
-  "body-aches",
-  "breakouts",
-  "food-cravings",
-  "headache",
-  "insomnia",
-  "mood-swings",
-  "tender-breasts",
+  "Cramps",
+  "Bloating",
+  "Body Aches",
+  "Breakouts",
+  "Cravings",
+  "Headaches",
+  "Insomnia",
+  "Mood Swings",
+  "Tender Breasts",
 ];
 
 const moodObject = [
-  "angry",
-  "annoyed",
-  "excited",
-  "happy",
-  "neutral",
-  "sad",
-  "sick",
-  "tired",
-  "worried",
+  "Angry",
+  "Annoyed",
+  "Excited",
+  "Happy",
+  "Neutral",
+  "Sad",
+  "Sick",
+  "Tired",
+  "Worried",
 ];
 
 const flowStrengthObj = ["Light", "Medium", "Heavy"];

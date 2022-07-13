@@ -39,7 +39,7 @@ function validateMood(moodObj) {
     let isMoodValid = false;
 
     moodObject.forEach((moods) => {
-      if (moods == moodObj) {
+      if (moods === moodObj) {
         isMoodValid = true;
       }
     });
@@ -58,7 +58,7 @@ function validateSymptoms(symptomsObj) {
     let symptomsLength = symptomsObj.length;
     for (let i = 0; i < symptomsLength; i++) {
       symptomsObject.forEach((symptoms) => {
-        if (symptoms == symptomsObj[i]) {
+        if (symptoms === symptomsObj[i]) {
           symptomsCounter++;
         }
       });
@@ -75,7 +75,7 @@ function validateSymptoms(symptomsObj) {
 function validateFlowStrength(flowStrength) {
   let isFlowValid = false;
   flowStrengthObj.forEach((flow) => {
-    if (flowStrength.toUpperCase() == flow.toUpperCase()) {
+    if (flowStrength.toUpperCase() === flow.toUpperCase()) {
       isFlowValid = true;
     }
   });

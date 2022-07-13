@@ -195,9 +195,9 @@ const EntryForm = () => {
         let dateSelected = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 9 ? "0" : ""}${date.getDate()}`;
         allEntries?.map(entry => {
             let entryDate = entry.date.substring(0, 10);
-            if (dateSelected == entryDate) {
+            if (dateSelected === entryDate) {
                 dayFound = true;
-                if (entry.periodDateType != 0)
+                if (entry.periodDateType !== 0)
                     togglePeriodInfo()
                 setDayEntry(entry);
             }
@@ -329,11 +329,11 @@ const EntryForm = () => {
                             <article>
                             <p className='form-desc'>What day of your period was it?</p>
                             <fieldset id="period-day">
-                                <input type="radio" id='start' value="start" name="period-day" checked={dayEntry?.periodDateType == 1} onChange={() => periodDayClick(1)}/>
+                                <input type="radio" id='start' value="start" name="period-day" checked={dayEntry?.periodDateType === 1} onChange={() => periodDayClick(1)}/>
                                 <label htmlFor="start">Start day</label>
-                                <input type="radio" id='end' value="end" name="period-day" checked={dayEntry?.periodDateType == 2} onChange={() => periodDayClick(2)}/>
+                                <input type="radio" id='end' value="end" name="period-day" checked={dayEntry?.periodDateType === 2} onChange={() => periodDayClick(2)}/>
                                 <label htmlFor="end">End day</label>
-                                <input type="radio" id='normal' value="normal" name="period-day" checked={dayEntry?.periodDateType == 3} onChange={() => periodDayClick(3)}/>
+                                <input type="radio" id='normal' value="normal" name="period-day" checked={dayEntry?.periodDateType === 3} onChange={() => periodDayClick(3)}/>
                                 <label htmlFor="normal">Just another day</label>
                             </fieldset>
 
@@ -341,7 +341,7 @@ const EntryForm = () => {
                             {
                                 flows.map((flow, index) => {
                                     return(
-                                        <article key={index} className={dayEntry?.flowStrength == flow.name ? 'flow selected-flow' : 'flow'} id={flow.name} onClick={() => periodFlowClick(flow.name)}>
+                                        <article key={index} className={dayEntry?.flowStrength === flow.name ? 'flow selected-flow' : 'flow'} id={flow.name} onClick={() => periodFlowClick(flow.name)}>
                                             <span>
                                             <img alt='period icon' src={flow.img}></img>
                                             <p>{flow.name}</p>

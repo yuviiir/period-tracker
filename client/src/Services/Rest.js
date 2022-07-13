@@ -5,12 +5,7 @@ axios.defaults.crossDomain = true;
 let path;
 let config;
 
-if (window.location.href.indexOf("localhost") > -1) {
-    path = "http://localhost:3000";
-}
-else {
-    path = "/api";
-}
+path = "/api";
 
 config = {
     cycle: (jwt) =>

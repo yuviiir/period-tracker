@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import './App.css';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
 //Components
 import Homepage from './Components/Homepage/Homepage';
@@ -13,6 +13,13 @@ import { PeriodTrackerContext } from "./Context/Context";
 function App() {
   const context = useContext(PeriodTrackerContext);
 
+  const NotFound = () => (
+    <div className='not-found'>
+      <h1>404 - Not Found!</h1>
+      <Link className='popup-button' to="/">Go Home</Link>
+    </div>
+  );
+
   useEffect(() => {
     if (routes.includes(window.location.pathname)) {
       if (!context.email || !context.jwtToken) {
@@ -21,7 +28,6 @@ function App() {
       }
     };
   }, []);
-
 
   let routes = ["/home", "/journal"]
   return (
@@ -38,6 +44,7 @@ function App() {
             <Route exact path="/" element={<LandingPage/>}></Route>
             <Route exact path="/home" element={<Homepage/>}></Route>
             <Route exact path="/journal" element={<JournalPage/>}></Route>
+            <Route path="*" element={<NotFound/>}></Route>
           </Routes>
         </BrowserRouter>
       </div>

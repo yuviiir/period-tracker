@@ -32,7 +32,7 @@ Instructions on how to deploy to localhost, for testing purposes.
 
 ## Start Command
 
-`docker compose up -d --build`
+`docker compose up -d`
 
 # Architecture
-![Architecture Diagram](Period_Tracker_Diagram.svg "Architecture Diagram")
+![Architecture Diagram](Period_Tracker_Diagram.png "Architecture Diagram")

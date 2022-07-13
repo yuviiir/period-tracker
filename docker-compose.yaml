@@ -2,15 +2,16 @@ version: '3.2'
 services:
   frontend:
     image: johannsbbd/bbd-grad-period-tracker-frontend:v1.3
-    ports:
-      - 80:3000
   
   backend:
     image: johannsbbd/bbd-grad-period-tracker-backend:v1.3
-    ports:
-      - 3000:3000
     environment:
       - PORT=${BACKEND_PORT}
       - COGNITO_REGION=${COGNITO_REGION}
       - COGNITO_POOL_ID=${COGNITO_POOL_ID}
       - MONGO_URL=${MONGO_URL}
+  
+  proxy:
+    image: johannsbbd/bbd-grad-period-tracker-proxy:v1.3
+    ports:
+      - 80:80

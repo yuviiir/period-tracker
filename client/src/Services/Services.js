@@ -5,13 +5,15 @@ import config from './Rest'
 export function getCycle(jwt) {
     return new Promise((resolve, reject) => {
         config
-        .cycle(jwt, (err, data) => {
-            if (err) {
-                reject(err)
-            }
-            else {
-                resolve(data)
-            }
+        .cycle(jwt)
+        .then(res => {
+            if (res.data)
+                resolve(res.data)
+            else
+                reject(res)
+        })
+        .catch(err => {
+            reject(err)
         })
     })
 }

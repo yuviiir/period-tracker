@@ -4,7 +4,7 @@ import './LandingPage.css';
 import Nav from '../Common/Nav/Nav';
 import { PeriodTrackerContext } from '../../Context/Context';
 import { useNavigate } from 'react-router';
-import { getAllEvents, login, postJournalEntry, signUp } from '../../Services/Services';
+import { login, signUp } from '../../Services/Services';
 import Loader from '../Common/Loader/Loader'
 
 const LandingPage = () => {
@@ -14,11 +14,12 @@ const LandingPage = () => {
     const [formData, setFormData] = useState({});
     const [isFormValid, setIsFormValid] = useState(false);
     const [inLineError, setInLineError] = useState(null);
+    const [inLineMessage, setInLineMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     function initialiseForm(type) {
         let data;
-        if (type == 'Login') {
+        if (type === 'Login') {
             data = {
                 email: {
                     value: null,
@@ -123,6 +124,8 @@ const LandingPage = () => {
     }
     
     const submit = (type) => {
+        setInLineError(null);
+        setInLineMessage(null);
         context.setEmail(formData.email.value);
         setIsLoading(true);
         if (type === 'Login') {
@@ -131,7 +134,6 @@ const LandingPage = () => {
                     setInLineError(null);
                     setIsLoading(false);
                     context.setJwtToken(res.accessToken.jwtToken);
-                    console.log(res.accessToken.jwtToken);
                     routeChange('/home');
             })
             .catch(err => {
@@ -148,6 +150,7 @@ const LandingPage = () => {
                 signUp(formData.email.value, formData.password.value)
                     .then(res => {
                         setPopupType("Login");
+                        setInLineMessage("Please verify your account by clicking the link sent to your email, then log in.")
                         setIsLoading(false);
                     })
                     .catch(err => {
@@ -204,6 +207,14 @@ const LandingPage = () => {
                                     inLineError ?
                                         <section className='inline-error'>
                                             <p className='inline-error-msg'>{inLineError}</p>
+                                        </section>
+                                    :
+                                        null
+                                }
+                                {
+                                    inLineMessage ?
+                                        <section className='inline-msg'>
+                                            <p className='inline-msg'>{inLineMessage}</p>
                                         </section>
                                     :
                                         null
